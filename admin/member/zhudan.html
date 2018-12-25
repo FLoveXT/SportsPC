@@ -1,0 +1,1297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>注单查询</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="../../layui/css/layui.css" rel="stylesheet">
+    <link href="../../css/iconfont.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+
+    <script src="../../js/jquery-1.8.3.min.js"></script>
+    <script src="../../layui/layui.js"></script>
+    <script src="../../js/common.js"></script>
+    
+    <style>
+        .layui-input,
+        .layui-select,
+        .layui-textarea {
+            border: 1px solid #cecece;
+        }
+
+        .input {
+            height: 20px;
+            text-indent: 6px;
+        }
+
+        .coloRed {
+            color: #ff6600;
+            margin-left: 4px;
+        }
+
+        .btn-reflesh {
+            color: #003399
+        }
+        .enableColor{
+        	color: #904d9a;
+        }
+    </style>
+
+
+<script type="text/javascript">
+	layui.use('form', function () {});
+	$(function(){
+		getOrderList(1, ROWS)
+	});
+	
+	/**
+	 * 获取订单信息
+	 * @param type
+	 */
+	 var ROWS = 10;
+	function getOrderList(page, rows){
+		var reqData = {
+				memberId: "",
+				page: page,
+				rows: rows,
+				status: 2,
+		}
+		$.ajax({
+			type: "GET",
+			url: BaseUrl + "order/getOrderList",
+			data: reqData,
+			dataType: "json",
+			success: function(result){
+				var html = '';
+				if (result.code == SUCCESS_CODE) {
+					var data = result.result;
+					if(data){
+						var orderList = data.orderList;
+						
+						var totalPage = parseInt((data.total + (ROWS - 1))/ROWS);
+						$("#total").html(data.total);
+						$("#page").html(page);
+						
+						$(".enableColor").off("click")
+						if(page > 1){
+							$("#firstPage").addClass("enableColor");
+							$("#upPage").addClass("enableColor");
+						} else {
+							$("#firstPage").removeClass("enableColor");
+							$("#upPage").removeClass("enableColor");
+						}
+						if(totalPage > 1 && totalPage != page){
+							$("#nextPage").addClass("enableColor");
+							$("#endPage").addClass("enableColor");
+						}else{
+							$("#nextPage").removeClass("enableColor");
+							$("#endPage").removeClass("enableColor");
+						}
+						
+						$(".enableColor").on("click", function(){
+							var id= $(this).attr("id");
+							if(id == "firstPage"){
+								getOrderList(1, ROWS);
+							} else if(id == "upPage"){
+								getOrderList(page - 1, ROWS);
+							} else if(id == "nextPage"){
+								getOrderList(page + 1, ROWS);
+							} else if(id == "endPage"){
+								getOrderList(totalPage, ROWS);
+							}
+						})
+						
+						
+						$.each(orderList, function(i, order){
+							var betType = order.betType;
+							var betTypeStr = ""
+							if(betType == 0){
+								betTypeStr = "今日赛事";
+							} else if(betType == 1){
+								betTypeStr = "早盘";
+							} else if(betType == 2){
+								betTypeStr = "滚球";
+							}
+							
+							html += '<tr>';
+							html += '<td width="115"><p>NO:' + order.orderNo + '</p><p>' + order.createTime.substring(5, 10) + '</p><p>' + order.createTime.substring(10, 19) + '</p></td>';
+							html += '<td width="95"><p>足球' + betTypeStr + '</p>';
+							/* html += '<p>主让0 / 0.5</p>'; */
+							html += '</td>';
+							html += '<td >';
+							html += '<p>';
+							html += order.startTime.substring(5, 19);
+							if(betType == 2){
+								html += '<span>(</span>';
+								html += '<span style="color:blue;" title="下注时比赛开始时长">';
+								if(order.scope == "1h"){
+									html += "上半场  ";
+								} else if(order.scope == "ord"){
+									html += "全场  ";
+								} else if(order.scope == "2h"){
+									html += "下半场  ";
+								}
+								
+								html += order.playTime + ' </span>';
+								html += '<span style="color:red;" title="下注时比赛比分">&nbsp;&nbsp;' + order.score + '</span>';
+								html += '<span>)</span>';
+							} else {
+								html += '<span>(</span>';
+								html += '<span style="color:blue;" title="下注时比赛开始时长">';
+								if(order.scope == "1h"){
+									html += "上半场";
+								} else if(order.scope == "ord"){
+									html += "全场";
+								} else if(order.scope == "2h"){
+									html += "下半场";
+								}
+								
+								html += '<span>)</span>';
+							}
+							html += '</p>';
+							
+							html += '<p>' + order.tournamentTemplateName + '</p>';
+							html += '<p>';
+							html += '<span style="color: #8b0000;">[主]</span>' + order.teamName;
+							html += '<span style="color:red;">';
+							html += '<b>VS.</b>';
+							html += '</span>';
+							html += '<span style="color: #c0c0c0;">[客]</span>' + order.guestTeamName + '</p>';
+							html += '<p>';
+							var scope = order.scope;
+							var type = order.type;
+							var state = order.state;
+							var odds = order.odds;
+							var ouDparam = order.ouDparam;
+							if(scope == "1h"){
+								if(type == "1x2"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">半场独赢  '+order.teamName+'</span>  @<b>' + order.odds + '</b></span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">半场独赢  '+order.guestTeamName+'</span>  @<b>' + order.odds + '</b></span>';
+									} else if(state == 3){
+										html += '<span style="color: #CC0000;">半场独赢  和  @<b>' + order.odds + '</b></span>';
+									}
+								} else if(type == "ah"){
+									html += '<span style="color: #CC0000;">半场让球</span>';
+									if(state == 1){
+										html += order.teamName;
+										if(order.ahTeam == 1){
+											html += "-";
+										} else if(order.ahTeam == 2){
+											html += "+";
+										}
+									} else if(state == 2){
+										html += order.guestTeamName;
+										if(order.ahTeam == 1){
+											html += "+";
+										} else if(order.ahTeam == 2){
+											html += "-";
+										}
+									}
+									html += formatOdds(order.ahDparam);
+									html += '  @<b>' + order.odds + '</b></span>';
+								} else if(type == "ou"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">半场大小球 大' + formatOdds(ouDparam) + '  @<b>' + order.odds + '</b></span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">半场大小球 小' + formatOdds(ouDparam) + '  @<b>' + order.odds + '</b></span>';
+									}
+								}
+							} else if(scope == "ord"){
+								if(type == "1x2"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">全场独赢 '+order.teamName+'  @<b>' + order.odds + '</b></span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">全场独赢 '+order.guestTeamName+'  @<b>' + order.odds + '</b></span>';
+									} else if(state == 3){
+										html += '<span style="color: #CC0000;">全场独赢 和  @<b>' + order.odds + '</b></span>';
+									}
+								} else if(type == "ah"){
+									html += '<span style="color: #CC0000;">全场让球 ';
+									if(state == 1){
+										html += order.teamName;
+										if(order.ahTeam == 1){
+											html += "-";
+										} else if(order.ahTeam == 2){
+											html += "+";
+										}
+									} else if(state == 2){
+										html += order.guestTeamName;
+										if(order.ahTeam == 1){
+											html += "+";
+										} else if(order.ahTeam == 2){
+											html += "-";
+										}
+									}
+									html += formatOdds(order.ahDparam);
+									html += '  @<b>' + order.odds + '</b></span>';
+								} else if(type == "ou"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">全场大小球 大' + formatOdds(ouDparam) + ' @<b>' + order.odds + '</b></span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">全场大小球 小' + formatOdds(ouDparam) + ' @<b>' + order.odds + '</b></span>';
+									}
+								}
+							} else if(scope == "2h"){
+								if(type == "1x2"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">下半场独赢</span>-<span></span>@<span style="color: #CC0000;"><b>' + order.odds + '</b></span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">下半场独赢</span>-<span></span>@<span style="color: #CC0000;"><b>' + order.odds + '</b></span>';
+									} else if(state == 3){
+										html += '<span style="color: #CC0000;">下半场独赢</span>-<span></span>@<span style="color: #CC0000;"><b>' + order.odds + '</b></span>';
+									}
+								} else if(type == "ah"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">下半场让球</span>-<span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">下半场让球</span>-<span>';
+									}
+									if(order.ahTeam == 1){
+										html += "主让";
+									} else if(order.ahTeam == 2){
+										html += '客让';
+									}
+									html += order.ahDparam;
+									html += '</span>@<span style="color: #CC0000;"><b>' + order.odds + '</b></span>';
+								} else if(type == "ou"){
+									if(state == 1){
+										html += '<span style="color: #CC0000;">下半场大小</span>-<span>大' + formatOdds(ouDparam) + '</span>@<span style="color: #CC0000;"><b>' + order.odds + '</b></span>';
+									} else if(state == 2){
+										html += '<span style="color: #CC0000;">下半场大小</span>-<span>小' + formatOdds(ouDparam) + '</span>@<span style="color: #CC0000;"><b>' + order.odds + '</b></span>';
+									}
+								}
+							}
+							html += '</p>';
+							html += ' </td>';
+							html += '<td >' + formatterDouble(order.betCount) + '</td>';
+							html += '<td >' + formatterDouble(order.winCount) + '</td>';
+							html += '<td >';
+							html += ORDER_STATUS[order.status];
+							if(order.resultScore)
+								html + "<br/><span style='color: red;'>" + order.resultScore + "</span>";
+							html += '</td>';
+							html += '<td >' +formatterDouble(order.reusltCount)+ '</td>';
+							html += '</tr>';
+							
+						})
+					}
+					$("#sportOrderTable tbody").html(html);
+				} else {
+					layer.alert(result.msg, {
+						title : '错误信息'
+					});
+				}
+			}
+		});
+	}
+</script>
+
+
+</head>
+
+<body style="background:#1f2934">
+
+    <div class="top_wrap">
+        <div class="container">
+            <div class="inside">
+                <span class="user_txt">会员中心</span>
+                <div class="pull-right">
+                    <p class="time">
+                        <i class="iconfont icon-shijian"></i>美东时间：2018-03-28 03:21:22</p>
+                    <a href="recharge.html" class="save_money pull-right">
+                        <i class="iconfont icon-qian"></i> 线上存款</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top:10px;">
+
+        <div class="box">
+            <div class="left_part">
+                <div class="wrap">
+                    <h1>会员专区</h1>
+                    <ul class="menu">
+                        <li id="onlineRecharge">
+                            <a href="recharge.html">在线充值</a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">额度转换</a>
+                        </li> -->
+                        <li id="tixianApply">
+                            <a href="tixain_aply.html">提现申请</a>
+                        </li>
+                        <li>
+                            <a href="account_info.html">帐目信息</a>
+                        </li>
+                        <li class="on">
+                            <a href="zhudan.html">注单查询</a>
+                        </li>
+                        <li id="loginOut">退出</li>
+                    </ul>
+                </div>
+                <div class="wrap">
+                    <h1>公告信息</h1>
+                    <ul class="menu">
+                        <li>
+                            <a href="user_info.html">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="spot_news.html">最新消息</a>
+                        </li>
+                        <li>
+                            <a href="play_board.html">游戏公告</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_part">
+
+                <script>
+                    $(document).ready(function () {
+                        $("ul.pay_typ li").click(function () {
+
+                            var index = $("ul.pay_typ li").index(this);
+                            $(".type_content").hide();
+                            $("ul.pay_typ li").removeClass("on");
+                            $(this).addClass("on");
+                            $(".type_content").eq(index).show();
+
+
+                        })
+                    }) 
+                </script>
+
+                <div class="inside">
+                    <ul class="pay_typ">
+                        <!-- <li class="on">注单统计</li>
+                        <li>彩票注单</li> -->
+                        <li>体育注单</li>
+                        <!-- <li>真人注单</li> -->
+                    </ul>
+                    <!--注单统计-->
+                    <div class="type_content"  style="display:none">
+
+                        <div style="padding-top:14px;">
+                            <form action="" method="get">
+                                <span>日期：</span>
+                                <input type="text" class="input" name="fromtime" class="ac-date" id="AddTime1" style="width:80px">
+                                <span> -- </span>
+                                <input type="text" class="input" name="totime" class="ac-date" id="AddTime2" style="width: 80px">
+
+                                <button type="submit" class="btn-tmp">查询</button>
+                            </form>
+
+                        </div>
+
+                        <table class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td class="tablename">彩票</td>
+                                    <td class="tablename">下注量</td>
+                                    <td class="tablename">下注金额</td>
+                                    <td class="tablename">派彩</td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=2&amp;m="> 六合彩</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=3&amp;m="> 江苏快3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=4&amp;m="> 幸运28</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=5&amp;m="> 福彩3D</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=6&amp;m="> 排列3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=7&amp;m="> 重庆时时彩</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=9&amp;m="> 北京PK10</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=10&amp;m="> 天津时时彩</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=12&amp;m="> 广东快乐十分</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=13&amp;m="> 重庆幸运农场</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=36&amp;m="> 河北快3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=37&amp;m="> 安徽快3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=40&amp;m="> 湖北快3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=41&amp;m="> 北京快3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=42&amp;m="> 广西快3</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberbet?TicketID=43&amp;m="> 幸运飞艇</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=14&amp;m="> 足球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> 13</span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> 140.00</span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> 116.80</span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=15&amp;m="> 篮球/美式足球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> 2</span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> 20.00</span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> 31.90</span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=16&amp;m="> 网球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=17&amp;m="> 排球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=18&amp;m="> 羽毛球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=19&amp;m="> 乒乓球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=20&amp;m="> 棒球</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberpe?TicketID=21&amp;m="> 其他</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=23&amp;m="> AG</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=25&amp;m="> BBin</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=26&amp;m="> MG</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=27&amp;m="> GD</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=28&amp;m="> DS</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=32&amp;m="> LBS</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=33&amp;m="> 分分彩</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="secTr">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=34&amp;m="> DG</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                                <tr id="">
+                                    <td style="width:30%;">
+                                        <span>
+                                            <a href="/MemberCenter/Bet/Memberag?TicketID=44&amp;m="> BG</a>
+                                        </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width: 15%;">
+                                        <span> </span>
+                                    </td>
+                                    <td style="width:20%;">
+                                        <span> </span>
+                                    </td>
+
+
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style=" font-weight:bold;">
+                                    <td style="text-align:right">合计:</td>
+                                    <td>15</td>
+                                    <td>160.00</td>
+                                    <td>148.70</td>
+
+
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+
+                    </div>
+
+
+                    <!--彩票注单-->
+                    <div class="type_content" style="display:none">
+
+                        <div style="padding-top:14px;">
+                            <form action="/MemberCenter/Bet/MemberBet" method="get">
+                                <span> 种类：</span>
+                                <select id="TicketID" name="TicketID" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="2">六合彩</option>
+                                    <option value="5">福彩3D</option>
+                                    <option value="6">排列3</option>
+                                    <option value="7">重庆时时彩</option>
+                                    <option value="10">天津时时彩</option>
+                                    <option value="12">广东快乐十分</option>
+                                    <option value="13">重庆幸运农场</option>
+                                    <option value="9">北京PK10</option>
+                                    <option value="43">幸运飞艇</option>
+                                    <option value="4">幸运28</option>
+                                    <option value="3">江苏快3</option>
+                                    <option value="36">河北快3</option>
+                                    <option value="37">安徽快3</option>
+                                    <option value="40">湖北快3</option>
+                                    <option value="41">北京快3</option>
+                                    <option value="42">广西快3</option>
+                                </select>
+                                <span> 状态：</span>
+                                <select id="Result" name="Result" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="-2">未结算</option>
+                                    <option value="2">已结算</option>
+                                    <option value="-1">未中</option>
+                                    <option value="0">和</option>
+                                    <option value="1">中</option>
+                                </select>
+                                <span> 日期：</span>
+                                <input type="text" class="input" name="AddTime" id="AddTime1" style="width:80px">
+                                <span> -- </span>
+                                <input type="text" class="input" name="AddTime2" id="AddTime2" style="width:80px">
+                                <span> 期号：</span>
+                                <input type="text" class="input" name="CaseNumber" id="CaseNumber" style="width:100px">
+
+                                <button type="submit" class="btn-tmp">查询</button>
+                            </form>
+
+                        </div>
+                        <table class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td class="tablename">期号</td>
+
+                                    <td class="tablename">分类</td>
+                                    <td class="tablename">玩法</td>
+                                    <td class="tablename">下注</td>
+                                    <td class="tablename">内容</td>
+
+
+
+                                    <td class="tablename">结果</td>
+                                    <td class="tablename">金额</td>
+                                    <td class="tablename">时间</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="10" style="text-align:center;">暂时没有数据！</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+
+
+
+                    <!--体育注单-->
+                    <div class="type_content">
+                        <!-- <div style="padding-top:14px;">
+                            <form action="/MemberCenter/Bet/MemberPE" method="get">
+                                <span> 种类：</span>
+                                <select id="TicketID" name="TicketID" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="14">足球</option>
+                                    <option value="15">篮球/美式足球</option>
+                                    <option value="16">网球</option>
+                                    <option value="17">排球</option>
+                                    <option value="18">羽毛球</option>
+                                    <option value="19">乒乓球</option>
+                                    <option value="20">棒球</option>
+                                    <option value="21">其他</option>
+                                </select>
+                                <span> 状态：</span>
+                                <select id="Result" name="Result" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="-2">未结算</option>
+                                    <option value="2">已结算</option>
+                                    <option value="-1">未中</option>
+                                    <option value="0">和</option>
+                                    <option value="1">中</option>
+                                </select>
+                                <span> 日期：</span>
+                                <input type="text" class="input" name="AddTime" id="AddTime1" style="width:80px">
+                                <span> -- </span>
+                                <input type="text" class="input" name="AddTime2" id="AddTime2" style="width:80px">
+                                <span> 期号：</span>
+                                <input type="text" class="input" name="CaseNumber" id="CaseNumber" style="width:100px">
+                                <br>
+                                <br>
+                                <span> 联赛：</span>
+                                <input type="text" class="input" name="League" id="League">
+                                <span> 主队：</span>
+                                <input type="text" class="input" name="HomeName" id="HomeName">
+                                <span> 客队：</span>
+                                <input type="text" class="input" name="AwayName" id="AwayName">
+                                <input type="hidden" name="m">
+                                <button type="submit" class="btn-tmp">查询</button>
+                            </form>
+                        </div> -->
+
+                        <table id="sportOrderTable" class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <thead>
+                                <tr>
+                                    <td colspan="7">
+                                        <span style="color:red">注</span> ：足球(滚球)将在系统结算前自动删除进球前150 秒注单(退本金)
+                                    </td>
+                                </tr>
+                                <tr style="font-size:14px;">
+                                    <td style="width: 130px;text-align:center">
+                                        注单号/投注日期
+                                    </td>
+                                    <td style="width: 100px; text-align: center">
+                                        投注类型
+                                    </td>
+                                    <td style="text-align: center">
+                                        选项
+                                    </td>
+                                    <td style="width: 55px; text-align: center">
+                                        投注额
+                                    </td>
+                                    <td style="width: 60px; text-align: center">
+                                        可赢金额
+                                    </td>
+                                    <td style="width: 60px; text-align: center">
+                                        结果
+                                    </td>
+                                    <td style="width: 60px; text-align: center">
+                                        派彩结果
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+	                                    <span id="total">0</span>条记录，当前第
+	                                    <strong id="page">1</strong>页</td>
+	                                <td style="text-align:right;">
+	                                    <a id="firstPage">首页</a>&nbsp;&nbsp;
+	                                    <a id="upPage">上一页</a>&nbsp;&nbsp;
+	                                    <a id="nextPage">下一页</a>&nbsp;&nbsp;
+	                                    <a id="endPage">尾页</a>
+	                                </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <!--真人注单-->
+                    <div class="type_content" style="display:none">
+                        <div style="padding-top:14px;">
+                            <form action="/MemberCenter/Bet/MemberAG" method="get">
+                                <span> 真人：</span>
+                                <select id="ZRPlat" name="ZRPlat" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="AG">AG</option>
+                                    <option value="BB">BB</option>
+                                    <option value="DS">DS</option>
+                                    <option value="GD">GD</option>
+                                    <option value="MG">MG</option>
+                                    <option value="CT">CT</option>
+                                    <option value="LBS">LBS</option>
+                                    <option value="DSFFC">分分彩</option>
+                                    <option value="DG">DG</option>
+                                </select>
+                                <span> 状态：</span>
+                                <select id="Result" name="Result" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="-1">输</option>
+                                    <option value="0">和</option>
+                                    <option value="1">赢</option>
+                                </select>
+                                <span> 日期：</span>
+                                <input type="text" class="input" name="AddTime" id="AddTime1" style="width:80px">
+                                <span>--</span>
+                                <input type="text" class="input" name="AddTime2" id="AddTime2" style="width:80px">
+
+                                <button type="submit" class="btn-tmp">查询</button>
+                            </form>
+                        </div>
+
+                        <table class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td class="tablename">平台</td>
+                                    <td class="tablename">注单号</td>
+
+                                    <td class="tablename">下注信息</td>
+
+
+                                    <td class="tablename">投注金额</td>
+                                    <td class="tablename">结果</td>
+                                    <td class="tablename">派彩</td>
+                                    <td class="tablename">时间</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="9" style="text-align:center;">暂时没有数据！</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div>
+            <div style=" clear:both"></div>
+        </div>
+    </div>
+</body>

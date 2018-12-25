@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>皇冠体育</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/order.css" rel="stylesheet">
+    <link href="css/iconfont.css" rel="stylesheet">
+    <link href="css/layout.css" rel="stylesheet">
+    <link href="css/jquery.mCustomScrollbar.css" rel="stylesheet">
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/jquery.cycle2.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="layui/layui.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/getvalue.js"></script>
+    <script src="js/daili_switch.js"></script>
+    <style>
+        .mCSB_scrollTools .mCSB_dragger .mCSB_dragger_bar {
+            background-color: #2d2c2b;
+            filter: "alpha(opacity=65)";
+            -ms-filter: "alpha(opacity=65)";
+        }
+
+        .mCSB_scrollTools .mCSB_draggerRail {
+            width: 14px;
+            height: 100%;
+            margin: 0 auto;
+            -webkit-border-radius: 0px;
+            -moz-border-radius: 0px;
+            border-radius: 0px;
+        }
+        
+        .enableColor{
+        	color: #904d9a;
+        }
+    </style>
+
+</head>
+
+<body style="background:#1f2934">
+    <!--login being-->
+    <div class="topbar" id="header">
+        <div class="link">
+            <ul>
+                <li class="gtip" original-title="收藏金沙娱乐场">
+                    <i class="iconfont icon-shoucang" onclick="alert('「您使用的浏览器不支援此功能，请按“Ctrl+D”键手动加入收藏。」');"></i>
+                </li>
+                <li class="gtip" original-title="设为首页">
+                    <i class="iconfont icon-shouye" onclick="alert('「您使用的浏览器不支援此功能，请手动进行设置。」');"></i>
+                </li>
+                <li class="gtip" original-title="保存到桌面">
+                    <i class="iconfont icon-baocun"></i>
+                </li>
+                <li>
+                    <a id="dlzcid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">代理注册</a>
+                </li>
+                <li>
+                     <a id="hzjmid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">合作加盟</a>
+                </li>
+                <li>
+                    <a id="dldrid" href="partners.html?daili=3" target="_blank" style="color: rgb(255, 0, 0);">代理登入</a>
+                </li>
+                <li>
+                    <a href="appDownload.html" target="_blank">APP手机下载</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="operate">
+            <!--未登录 begin  -->
+            <ul class="no_login" style="display:block" id="no_login">
+                <li class="inp">
+                    <i class="iconfont icon-username"></i>
+                    <input id="login_accout" type="text" class="_inp" placeholder="用户" maxlength="20">
+                </li>
+                <li class="inp">
+                    <i class="iconfont icon-icon-lock"></i>
+                    <input id="login_pwd" type="password" class="_inp" placeholder="密码" maxlength="20">
+                </li>
+
+                <li class="captcha">
+                    <input id="verify_code" class="_inp" type="text" name="BETVALIDATECODEL" maxlength="5" placeholder="输入验证码">
+                </li>
+                <li class="captcha">
+                    <img id="verify_code_img" class="code" src="images/code.jpg"  style="width:50px;height:30px;">
+                </li>
+                <li>
+                    <a id="topLoging-btn" href="javascript:;" class="btn_login" onclick="BetLogin()" f="game">立即登录</a>
+                </li>
+                <li>
+                    <a href="register.html" class="btn_login" onclick="">注册</a>
+                </li>
+                <li style="padding-right:10px;">
+                    <a href="javascript:;" onclick="alert('「请联系在线客服找回密码！」');" class="forgot_btn">忘记密码</a>
+                </li>
+
+            </ul>
+            <!--未登录 end  -->
+
+            <!--已登录 begin  -->
+            <ul class="logined" style="display:none;" id="logined">
+                <li class="balance">帐户余额：
+                    <b id="topBalance">0</b>￥</a>
+                </li>
+                <li id="saveMoney" class="money">
+                    <a href="admin/member/recharge.html"  target="view_window">存款</a>
+                </li>
+                <li id="getMoney" class="money">
+                    <a href="admin/member/tixain_aply.html" target="view_window">取款</a>
+                </li>
+                <li>
+                    <a href="admin/member/user_info.html" class="btn_login"  target="view_window" style="position:relative;top:7px;">个人中心</a>
+                </li>
+                <li class="user">
+                    <a href="javascript:;" class="user_icon">
+                        <i class="iconfont icon-user"></i>
+                        <span id="member_name">amber</span>
+                        <i class="iconfont icon-xiala"></i>
+                    </a>
+                    <div class="drop" style="display:none;">
+                        <!-- <a href="#"><i class="iconfont icon-icon-test"></i>额度转换</a> -->
+                        <a href="admin/member/user_info.html?flag=updatePwd" target="view_window">
+                            <i class="iconfont icon-mima"></i>修改密码</a>
+                        <a href="javascript:;" onclick="EixtLogin()">
+                            <i class="iconfont icon-tuichu6"></i>退出</a>
+                    </div>
+                </li>
+                <li class="info">
+                    <a href="javascript:;" class="email">
+                        <i class="iconfont icon-email"></i>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <!--login end-->
+
+    <!--menu begin-->
+    <div class="menu">
+        <div class="wrap">
+            <div class="logo">
+                <img src="images/logo.jpg" width="140">
+            </div>
+            <div class="nav">
+                    <ul>
+                            <li>
+                                <a href="index.html" target="">
+                                    <i class="iconfont icon-home"></i> 首页</a>
+                            </li>
+                            <li>
+                                <a href="game.html" target="">
+                                    <i class="iconfont icon-kickball"></i> 体育赛事</a>
+                            </li>
+                            <li>
+                                <a href="appDownload.html" target="">
+                                    <i class="iconfont icon-mobile_pay"></i> 手机下注</a>
+                            </li>
+                            <li>
+                                <a href="partners.html" target="">
+                                    <i class="iconfont icon-user"></i> 代理中心</a>
+                            </li>
+                            <li>
+                                <a href="help.html" target="">
+                                    <i class="iconfont icon-help"></i> 帮助中心</a>
+                            </li>
+                            <li>
+                                <a href="#" target="" class="zixun_btn">
+                                    <i class="iconfont icon-kefu"></i> 在线客服</a>
+                            </li>
+                        </ul>
+
+            </div>
+        </div>
+    </div>
+    <!--menu end-->
+
+
+    <!-- banner begin -->
+    <DIV style="background:#000;">
+
+        <div class="wrap">
+            <img src="images/gamebanner.jpg">
+        </DIV>
+    </DIV>
+    <!-- banner end  -->
+
+
+    <div class="game wrap">
+
+        <div class="header">
+            <div class="user">
+                <ul>
+                    <li class="user_head">
+                        <i class="iconfont icon-1USER"></i>
+                    </li>
+                    <li class="user_info">你好，<span id="headUsserName">请登录</span>
+                        <p>RMB：<span id="headBalance">0.00</span>￥</p>
+                    </li>
+                </ul>
+
+            </div>
+            <div class="trade">
+                <div class="trade_state">
+                    <a href="javascript:;" onclick="game_type.switch_type('注单查询',4)">注单查询</a>
+                    <!-- <a href="#">赛果</a> -->
+                    <a href="rule.html">帮助</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="game_trade">
+            <!--left-->
+            <div class="order_info">
+
+                <ul class="order_menu">
+                    <li class="on">目录</li>
+                    <li>交易单</li>
+                    <li>我的注单
+                        <span id="myOrderCount" class="num">0</span>
+                    </li>
+                </ul>
+                <!--目录-->
+                <div class="order_content">
+                    <div class="game_type">
+                        <h1>足球
+                            <i class="iconfont icon-football pull-right"></i>
+                        </h1>
+                        <div class="type" style="padding-top:10px;">
+                            <p class="on" onclick="game_type.switch_type('滚球',0)">滚球
+                                <i class="iconfont icon-gunqiu"></i>
+                            </p>
+                            <p onclick="game_type.switch_type('今日',1)">今日
+                                <i class="iconfont icon-jinri"></i>
+                            </p>
+                            <p onclick="game_type.switch_type('早盘',2)">早盘
+                                <i class="iconfont icon-morning"></i>
+                            </p>
+                            <p onclick="game_type.switch_type('赛果',3)">赛果
+                                <i class="iconfont icon-saiguo"></i>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--交易单-->
+                <div class="order_content" style="display:none;">
+
+
+                    <div id="div_betslip" name="div_bet" class="ord_DIV" style="background:#ff6600;">
+                        <div class="ord_DIV">
+                            <input id="tid" name="tid" type="hidden" value="14">
+                            <input id="gid" name="gid" type="hidden" value="">
+                            <input id="mid" name="mid" type="hidden" value="250">
+                            <input id="type" name="type" type="hidden" value="2">
+
+                            <h1 id="Sin_Bet">单一投注</h1>
+                            <div id="Bet_nodata" class="ord_noOrder" style="display: block;">请把选项加入您的注单。</div>
+                            <!-- 注单信息 -->
+                            <div id="Ord_div" style="display:none;">
+
+                                <div id="BetList24201" class="ord_betAreaP">
+                                    <ul class="ord_betArea_wordTop">
+                                        <li class="BlueWord">
+                                            <span id="0TypeName">独赢</span>
+                                        </li>
+                                        <li id="orderLiansaiName" class="light_BrownWord upperWord"></li>
+                                        <li class="dark_BrownWord"><span id="orderHostTeamName"></span>
+                                            <tt class="RedWord fatWord"></tt>
+                                            <tt class="ord_vWord">v</tt><span id="orderGuestTeamName"></span>
+                                            <tt class="RedWord fatWord"></tt>
+                                            <span class="BlueWord"></span>
+                                        </li>
+                                    </ul>
+                                    <ul class="ord_betArea_wordBottom">
+                                        <li class="dark_BrownWord no_margin" id="0RateNameDisplay">
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!--注单功能区-->
+
+                            <div class="ord_betFuntion" id="gold_show" style="display:none;">
+                                <!--手动输入数字-->
+                                <div class="ord_enterNUMG">
+                                    <div class="ord_NUM noFloat">
+                                        <input id="BetMoney" name="BetMoney" placeholder="投注额"  size="8" maxlength="10"
+                                            type="text">
+
+                                        <span class="ord_delBTN" id="order_delBTN"></span>
+
+                                    </div>
+                                    <div class="ord_SUM">
+                                        <span class="ord_SUM_L">可赢金额:</span>
+                                        <span id="winMoney" class="ord_SUM_R">0.00</span>
+                                    </div>
+                                </div>
+
+                                <!--按钮输入数字-->
+                                <div id="moenyBTN" class="ord_enterBTNG">
+                                    <span class="moenyCount" val="10">10</span>
+                                    <span class="moenyCount" val="30">30</span>
+                                    <span class="moenyCount" val="50">50</span>
+                                    <span class="moenyCount" val="100">100</span>`
+                                    <span class="moenyCount" val="300">300</span>
+                                    <span class="moenyCount" val="1000">1,000</span>
+                                </div>
+
+
+
+                                <!--确定下注区-->
+                                <div class="ord_TotalAreaG">
+                                    <span id="Submit" class="ord_betBTN" onclick="affirm_trad()">确定交易</span>
+                                    <span name="btnCancel" class="ord_cancalBTN" onclick="trade.cancelTouzhu()">取消</span>
+
+                                    <table class="ord_TotalTXT" cellpadding="0" cellspacing="0">
+                                        <tbody>
+                                            <tr>
+                                                <td width="40%">单注最低:</td>
+                                                <td class="Word_Toright" width="60%" id="MinMoney">10.00</td>
+                                            </tr>
+                                            <tr>
+                                                <td>单注最高:</td>
+                                                <td class="Word_Toright" id="MaxMoney">500000.00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <!--自动接受更好赔率-->
+                                    <div class="ord_AutoOddG noFloat">
+                                        <input id="autoOdd" name="autoOdd" class="ord_checkBox" checked="" type="checkbox">
+                                        <span>自动接受较佳赔率</span>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <!--下注成功画面-->
+                            <div class="ord_betSuccG" style="display:none">
+                                <div class="ord_checkG noFloat">
+                                    <span id="UserLogOnContainer"></span>
+                                </div>
+                                <span id="OpenBets" class="ord_cancalBTN" style="display:none">查看我的注单</span>
+                                <span id="ChkBets" class="ord_cancalBTN">确认</span>
+                            </div>
+
+                            <!--交易遮罩-->
+                            <div id="confirm_div" class="ord_DIV_Mask" style="display:none" onkeypress="SumbitCheckKey(event)" tabindex="1">
+                                <!--交易确认单-->
+                                <div id="ord_conf" class="ord_confirmation">
+                                    <h1>投注确认</h1>
+                                    <ul>
+                                        <li>交易金额:
+                                            <tt id="confirm_BetMoney" class="dark_BrownWord"></tt>
+                                        </li>
+                                        <li>可赢金额:
+                                            <tt id="confirm_wingold" class="GreenWord"></tt>
+                                        </li>
+                                        <li id="confirm_msg">确定进行下注吗?</li>
+                                        <li id="dangerTip" style="color: #777;font-size: 10px; display: none;">*危险球提示：120秒内发生比分变化，系统将自动取消订单，退回本金。</li>
+                                    </ul>
+                                    <div class="ord_miniBTNG">
+                                        <span id="confirm_bet" class="ord_betBTN">确定下注</span>
+                                        <span id="confirm_cancel" onclick="cancelConfirmEvent();" class="ord_cancalBTN">取消</span>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+                <script>
+
+                    $(document).ready(function () {
+                        $("#unord_setTitle ul li").toggle(function () {
+                            $("#unord_setTitle div[class=order_list]").hide();
+                            $(this).addClass("on")
+                        }, function () {
+                            $("#unord_setTitle div[class=order_list]").show();
+                            $(this).removeClass("on")
+                        })
+
+                        $("#ord_setTitle ul li").toggle(function () {
+                            $("#ord_setTitle div[class=order_list]").hide();
+                            $(this).addClass("on")
+                        }, function () {
+                            $("#ord_setTitle div[class=order_list]").show();
+                            $(this).removeClass("on")
+                        })
+                    })
+
+                </script>
+                <!--我的注单-->
+                <div class="order_content" style="display:none;">
+
+                    <!--未结算注单-->
+                    <div class="ord_DIV">
+
+                        <div id="unord_setTitle">
+                            <div class="ord_setTitle">
+                                <ul>
+                                    <li class="">未结算注单
+                                        <p>最新10笔交易</p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="unfinishOrder">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--已结算注单-->
+                    <div class="ord_DIV">
+
+                        <div id="ord_setTitle">
+                            <div id="ord_setTitle" class="ord_setTitle">
+                                <ul>
+                                    <li class="">已结算注单
+                                        <p>今日</p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div id="finishOrder">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--right-->
+            <div class="game_list">
+
+                <div class="inside">
+                    <div class="filter_box">
+                        <a href="javascript:;" class="select_all_btn" onclick="select_ls.pop_layer()">选择联赛
+                            <span>（全部）</span>
+                        </a>
+                        <div class="pull-right">
+                            <div class="fresh" id="freshTimeBtn">
+                                <a href="javascript:;">
+                                    <i class="iconfont icon-shuaxin"></i>
+                                </a>
+                                <span id="freshTime">60</span>
+                            </div>
+                            <div class="drop1">
+                                <span class="num"><span id="currentPage">1</span>/<span id="totalPage">3</span></span>
+                                <select id="selPage" name="" style="border:0;">
+                                    <option value="1">1</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="type_container">
+
+
+                        <!--滚球begin-->
+                        <div class="mulu_type" id="gunqiu" style="display:block;">
+                            <script>
+                                $(document).ready(function () {
+                                    $(".game_country h1").toggle(function () {
+                                        $(this).next().hide();
+                                        $(this).find('span').addClass("arrow_on");
+                                    }, function () {
+                                        $(this).next().show();
+                                        $(this).find('span').removeClass("arrow_on");
+                                    })
+                                })
+                            </script>
+
+                            <div class="tab_list">
+                                <table width="100%">
+                                     <tr>
+                                        <th class="game_name" width="265">足球&nbsp;&nbsp;
+                                            <span class="game_type_text">（今日）</span>
+                                        </th>
+                                        <th class="all_duyin" width="90">全场
+                                            <p>独赢</p>
+                                        </th>
+                                        <th class="all_rangqiu" width="120">全场
+                                            <p>让球</p>
+                                        </th>
+                                        <th class="all_daxiao" width="120">全场
+                                            <p>大小</p>
+                                        </th>
+                                        <th class="half_rangqiu" width="120">半场
+                                            <p>让球</p>
+                                        </th>
+                                        <th class="half_daxiao" style="padding-right: 35px;">半场
+                                            <p>大小</p>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div id="currentData" class="tab_list chat" style="height:600px;padding-top:0;">
+                            </div>
+                        </div>
+                        <!--滚球end-->
+
+
+                        <!--今日begin-->
+                        <div class="mulu_type" id="today" style="display:none;">
+                            <div class="tab_list">
+                                <table width="100%">
+                                    <tr>
+                                        <th class="game_name" width="265">足球&nbsp;&nbsp;
+                                            <span class="game_type_text">（今日）</span>
+                                        </th>
+                                        <th class="all_duyin" width="90">全场
+                                            <p>独赢</p>
+                                        </th>
+                                        <th class="all_rangqiu" width="120">全场
+                                            <p>让球</p>
+                                        </th>
+                                        <th class="all_daxiao" width="120">全场
+                                            <p>大小</p>
+                                        </th>
+                                        <th class="half_rangqiu" width="120">半场
+                                            <p>让球</p>
+                                        </th>
+                                        <th class="half_daxiao" style="padding-right: 35px;">半场
+                                            <p>大小</p>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div id="todayData" class="tab_list chat" style="height:600px;padding-top:0;">
+                            </div>
+                        </div>
+                        <!--今日end-->
+
+                        <!--早盘begin-->
+                        <div class="mulu_type" id="morning" style="display:none;">
+
+                            <div class="tab_list">
+                                <table width="100%">
+                                    <tr>
+                                        <th class="game_name" width="265">足球&nbsp;&nbsp;
+                                            <span class="game_type_text">（滚球）</span>
+                                        </th>
+                                         <th class="all_duyin" width="90">全场
+                                            <p>独赢</p>
+                                        </th>
+                                        <th class="all_rangqiu" width="120">全场
+                                            <p>让球</p>
+                                        </th>
+                                        <th class="all_daxiao" width="120">全场
+                                            <p>大小</p>
+                                        </th>
+                                        <th class="half_rangqiu" width="120">半场
+                                            <p>让球</p>
+                                        </th>
+                                        <th class="half_daxiao" style="padding-right: 35px;">半场
+                                            <p>大小</p>
+                                        </th>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div id="morningData" class="tab_list chat" style="height:600px;padding-top:0;">
+                            </div>
+                        </div>
+                        <!--早盘end-->
+
+
+                        <!--赛果begin-->
+                        <div class="mulu_type" id="result" style="display:none;">
+
+                            <div class="fiter_box layui-form">
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">联赛：</label>
+                                                <div class="layui-input-block">
+                                                    <select id="liansaiSelect" datatype="*" lay-filter="liansaiSelect" lay-search="">
+                                                        <option value=""></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="layui-form-item">
+                                                <label class="layui-form-label">日期：</label>
+                                                <div class="layui-input-block">
+                                                    <input type="text"  id="gameResultDate" placeholder="2015-12-25" autocomplete="off" class="layui-input">
+                                                </div>
+                                            </div>
+
+                                        </td>
+
+                                        <td style="padding-left:10px;">
+                                            <a id="gameResultListUp" href="##" class="pre_btn">上一日</a>
+                                            <a id="gameResultListNext" href="##" class="pre_btn">下一日</a>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+
+                            <div class="tab_list" style="margin-bottom: 90px;" >
+                            	<div id='gameResultList' style="width: 100%;">
+                            	
+                            	</div>
+                                
+                                <div class="page">
+			                        <table width="100%">
+			                            <tr>
+			                                <td>共
+			                                    <span id="total">0</span>条记录，当前第
+			                                    <strong id="page">1</strong>页</td>
+			                                <td style="text-align:right;">
+			                                    <a id="firstPage">首页</a>&nbsp;&nbsp;
+			                                    <a id="upPage">上一页</a>&nbsp;&nbsp;
+			                                    <a id="nextPage">下一页</a>&nbsp;&nbsp;
+			                                    <a id="endPage">尾页</a>
+			                                </td>
+			                            </tr>
+			
+			                        </table>
+			                    </div>
+                            </div>
+
+                        </div>
+                        <!--赛果end-->
+
+
+                        <!--交易情况begin-->
+                        <div class="mulu_type" id="result" style="display:none; padding-bottom: 80px;">
+
+                            <div class="fiter_box1">
+                                <span class="game_type_textf" style="position:relative;top:16px;left:14px;font-size:16px;">账户历史</span>
+                                <div class="drop1" style="padding-right:6px;">
+                                    <span id="orderPage" class="num">页1/3</span>
+                                    <select id="orderPageNo" name="" style="border:0;">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="tab_list">
+                                <table id="orderList" width="100%">
+                                    <thead>
+                                    <tr>
+                                        <th width="115">注单号 / 投注日期</th>
+                                        <th width="95">投注类型</th>
+                                        <th width="228">选项</th>
+                                        <th width="84">投注额</th>
+                                        <th width="83">可赢金额</th>
+                                        <th width="83">结果</th>
+                                        <th width="83">派彩结果</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+	                                </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                        <!--交易情况end-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--选择联赛 popup-->
+    <div class="pop_layer layui-form" id="select_ls_layer" style="display:none;">
+        <div class="content">
+            <h1>选择联赛
+                <a href="javascript:;" onclick="select_ls.exit()" class="exit_btn pull-right">
+                    <i class="iconfont icon-guanbi"></i>
+                </a>
+            </h1>
+
+            <h2>
+                联赛
+                <div class="select_all">
+                    <input type="checkbox" name="" id="select_all" lay-filter="select_all" title="全选" lay-skin="primary">
+                </div>
+            </h2>
+            <div class="item" id="item_list" style="margin-top:10px;">
+                <table width="100%" id="filter-tournamentTemplate-table">
+                </table>
+            </div>
+            <div style="padding-top: 18px; text-align: center;">
+                <a id="confirm-search-btn" href="#" class="mybtn">送出</a>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!--客服-->
+    <div class="slider_kefu">
+        <div class="inside">
+            <img src="images/kefu_img.png">
+            <div align="center" class="zixun">
+                <a id="zixun_btn" href="javascript:;" class="zixun_btn">点击咨询 </a>
+            </div>
+            <div align="center" class="zixun mt10">
+                <img src="images/kef.jpg">
+            </div>
+            <div>
+                <a href="javascript:;" class="close_btn">
+                    <i class="iconfont icon-guanbi"></i>
+                </a>
+            </div>
+            
+            
+        </div>
+    </div>
+
+
+    <!-- <div class="footer" style="position:none;">
+        <div class="bottom_menu">
+            <a href="#" class="first">关于我们</a>
+            <a href="#">合作加盟</a>
+            <a href="#">体育赛事</a>
+            <a href="#">代理中心</a>
+            <a href="#">帮助中心</a>
+        </div>
+
+        <div class="copyright">© 2018 皇冠体育 版权所有</div>
+    </div> -->
+
+    <script>
+        //滚动条插件
+        $(document).ready(function () {
+            /* $(".chat").mCustomScrollbar({
+                axis: "y",
+                advanced: {
+                    autoExpandHorizontalScroll: true
+                }
+            }); */
+        })
+
+    </script>
+
+
+
+<!-- <script language="javascript" src="http://api.pop800.com/800.js?n=358084&s=01&p=l&l=cn"></script><div style="display:none;">< a href=" ">在线客服</ a></div> -->
+</body>

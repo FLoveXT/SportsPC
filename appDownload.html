@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>皇冠体育</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/iconfont.css" rel="stylesheet">
+    <link href="css/layout.css" rel="stylesheet">
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="layui/layui.js"></script>
+    <script src="js/jquery.cycle2.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+
+
+
+
+    </script>
+</head>
+
+<body style="background:#1f2934">
+    <!--login being-->
+    <div class="topbar" id="header">
+        <div class="link">
+            <ul>
+                <li class="gtip" original-title="收藏金沙娱乐场">
+                    <i class="iconfont icon-shoucang" onclick="alert('「您使用的浏览器不支援此功能，请按“Ctrl+D”键手动加入收藏。」');"></i>
+                </li>
+                <li class="gtip" original-title="设为首页">
+                    <i class="iconfont icon-shouye" onclick="alert('「您使用的浏览器不支援此功能，请手动进行设置。」');"></i>
+                </li>
+                <li class="gtip" original-title="保存到桌面">
+                    <i class="iconfont icon-baocun"></i>
+                </li>
+                <li>
+                    <a id="dlzcid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">代理注册</a>
+                </li>
+                <li>
+                     <a id="hzjmid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">合作加盟</a>
+                </li>
+                <li>
+                    <a id="dldrid" href="" target="_blank" style="color: rgb(255, 0, 0);">代理登入</a>
+                </li>
+                <li>
+                    <a href="appDownload.html" target="_blank">APP手机下载</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="operate">
+            <!--未登录 begin  -->
+            <ul class="no_login" style="display:block" id="no_login">
+                <li class="inp">
+                    <i class="iconfont icon-username"></i>
+                    <input id="login_accout" type="text" class="_inp" placeholder="用户" maxlength="20">
+                </li>
+                <li class="inp">
+                    <i class="iconfont icon-icon-lock"></i>
+                    <input id="login_pwd" type="password" class="_inp" placeholder="密码" maxlength="20">
+                </li>
+
+                <li class="captcha">
+                    <input id="verify_code" class="_inp" type="text" name="BETVALIDATECODEL" maxlength="5" placeholder="输入验证码">
+                </li>
+                <li class="captcha">
+                    <img id="verify_code_img" class="code" src="images/code.jpg"  style="width:50px;height:30px;">
+                </li>
+                <li>
+                    <a href="javascript:;" class="btn_login" onclick="BetLogin()">立即登录</a>
+                </li>
+               <li>
+                    <a href="register.html" class="btn_login" onclick="">注册</a>
+                </li>
+                <li style="padding-right:10px;">
+                    <a href="javascript:;" onclick="alert('「请联系在线客服找回密码！」');" class="forgot_btn">忘记密码</a>
+                </li>
+
+
+            </ul>
+
+            <!--未登录 end  -->
+
+            <!--已登录 begin  -->
+            <ul class="logined" style="display:none;" id="logined">
+                <li class="balance">帐户余额：
+                    <b id="topBalance"></b>￥</a>
+                </li>
+                <li id="saveMoney" class="money">
+                    <a href="admin/member/recharge.html"  target="view_window">存款</a>
+                </li>
+                <li id="getMoney" class="money">
+                    <a href="admin/member/tixain_aply.html" target="view_window">取款</a>
+                </li>
+                <li>
+                    <a href="admin/member/user_info.html" class="btn_login"  target="view_window" style="position:relative;top:7px;">个人中心</a>
+                </li>
+                <li class="user">
+                    <a href="javascript:;" class="user_icon">
+                        <i class="iconfont icon-user"></i>
+                        <span id="member_name">amber</span>
+                        <i class="iconfont icon-xiala"></i>
+                    </a>
+                    <div class="drop" style="display:none;">
+                        <!-- <a href="#"> <i class="iconfont icon-icon-test"></i>额度转换</a> -->
+                        <a href="admin/member/user_info.html?flag=updatePwd">
+                            <i class="iconfont icon-mima"></i>修改密码</a>
+                        <a href="javascript:;" onclick="EixtLogin()">
+                            <i class="iconfont icon-tuichu6"></i>退出</a>
+                    </div>
+                </li>
+                <li class="info">
+                    <a href="javascript:;" class="email">
+                        <i class="iconfont icon-email"></i>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <!--login end-->
+
+    <!--menu begin-->
+    <div class="menu">
+        <div class="wrap">
+            <div class="logo">
+                <img src="images/logo.jpg" width="140">
+            </div>
+            <div class="nav">
+                <ul>
+                    <li>
+                        <a href="index.html" target="">
+                            <i class="iconfont icon-home"></i> 首页</a>
+                    </li>
+                    <li>
+                        <a href="game.html" target="">
+                            <i class="iconfont icon-kickball"></i> 体育赛事</a>
+                    </li>
+                    <li>
+                        <a href="appDownload.html" target="">
+                            <i class="iconfont icon-mobile_pay"></i> 手机下注</a>
+                    </li>
+                    <li>
+                        <a href="partners.html" target="">
+                            <i class="iconfont icon-user"></i> 代理中心</a>
+                    </li>
+                    <li>
+                        <a href="help.html" target="">
+                            <i class="iconfont icon-help"></i> 帮助中心</a>
+                    </li>
+                    <li>
+                        <a href="#" target="" class="zixun_btn">
+                            <i class="iconfont icon-kefu"></i> 在线客服</a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+    <!--menu end-->
+
+    <!-- banner -->
+    <DIV class="banner" style="min-width:1200px;">
+        <DIV class=cycle-slideshow data-cycle-swipe="true" data-cycle-log="false" data-cycle-pager=".cycle-pager" data-cycle-slides=".slides-content"
+            data-cycle-pause-on-hover="true" data-cycle-speed="1500" data-cycle-fx="fadeout" data-cycle-timeout="12000">
+            <DIV class="cycle-prev"></DIV>
+            <DIV class="cycle-next"></DIV>
+            <DIV class="slides-content">
+                <A href="#">
+                    <img src="images/phoneOrder.jpg" alt="全营销时代来临，蜜蜂助您转型">
+                </A>
+            </DIV>
+            <DIV id=progress></DIV>
+            <DIV class="cycle-pager"></DIV>
+        </DIV>
+    </DIV>
+
+    <SCRIPT>
+        var progress = $('#progress'),
+            slideshow = $('.cycle-slideshow');
+        slides = [];
+
+        slideshow.on('cycle-initialized cycle-before', function (e, opts) {
+            progress.stop(true).css('width', 0);
+        });
+
+        slideshow.on('cycle-initialized cycle-after', function (e, opts) {
+            // if ( ! slideshow.is('.cycle-paused') )
+            // progress.animate({ width: '100%' }, opts.timeout, 'linear' );
+        });
+
+        slideshow.on('cycle-paused', function (e, opts) {
+            progress.stop();
+        });
+
+        slideshow.on('cycle-resumed', function (e, opts, timeoutRemaining) {
+            // progress.animate({ width: '100%' }, timeoutRemaining, 'linear' );
+        });
+    </SCRIPT>
+    <!-- end banner -->
+
+    <!--客服-->
+    <div class="slider_kefu">
+            <div class="inside">
+                <img src="images/kefu_img.png">
+                <div align="center" class="zixun">
+                    <a id="zixun_btn" href="javascript:;" class="zixun_btn">点击咨询 </a>
+                </div>
+                <div align="center" class="zixun mt10">
+                    <img src="images/kef.jpg">
+                </div>
+                <div>
+                    <a href="javascript:;" class="close_btn">
+                        <i class="iconfont icon-guanbi"></i>
+                    </a>
+                </div>
+            </div>
+    </div>
+
+    <!-- <div class="footer">
+
+        <div class="bottom_menu">
+            <a href="#" class="first">关于我们</a>
+            <a href="#">合作加盟</a>
+            <a href="">体育赛事</a>
+            <a href="#">代理中心</a>
+            <a href="#">帮助中心</a>
+        </div>
+
+        <div class="copyright">© 2018 皇冠体育 版权所有</div>
+    </div> -->
+    <script>
+        $(document).ready(function () {
+            $(".close_btn").click(function () {
+                $(".slider_kefu").hide();
+            })
+        })
+
+    </script>
+
+</body>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>在线充值</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="../../layui/css/layui.css" rel="stylesheet">
+    <link href="../../css/iconfont.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+    <script src="../../js/jquery-1.8.3.min.js"></script>
+    <script src="../../layui/layui.js"></script>
+    <script src="../../js/common.js"></script>
+
+    <style>
+        .layui-input,
+        .layui-select,
+        .layui-textarea {
+            border: 1px solid #cecece;
+        }
+
+        .input {
+            height: 28px;
+            text-indent: 6px;
+        }
+        .coloRed {
+            color: #ff6600;
+            margin-left: 4px;
+        }
+        
+        .bankBtn{
+        	display: inline-block;
+        	border: 1px solid #CCC;
+        	padding: 3px;
+        	background-color: #ccc;
+        }
+        .bankBtn:HOVER {
+			cursor: pointer;
+		}
+    </style>
+
+	<script type="text/javascript">
+		var bankInfo = {};
+		$(function(){
+			$(".exit_btn").click(function(){
+				$("#payCode_pop").hide();
+			});
+			
+			$("#getBankInfo").click(function(){
+				$.ajax({
+					type : "GET",
+					url : BaseUrl + "bankAccount/getBankInfo",
+					dataType : "json",
+					success : function(result) {
+						if (result.code == SUCCESS_CODE) {
+							var data = result.result[0];
+							bankInfo = data;
+							$("#bankName").html(data.bankName);
+							$("#bankNo").html(data.bankNo);
+							$("#holderName").html(data.holderName);
+							$("#getBankInfo").hide();
+						}else {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+						}
+					}
+				})
+			});
+		})
+		
+		
+		layui.use('form', function() {
+			var form = layui.form;
+			//自定义验证规则  
+			form.verify({});
+
+			
+			//监听提交  
+			form.on('submit(bankSubmit-btn)', function(data) {
+				var url = BaseUrl + "pay/getBankPayCode?payType=" + data.field.payType;
+				url += "&name=" + data.field.name;
+				url += "&money=" + data.field.money;
+				url += "&createDate=" + data.field.createDate;
+				url += "&bank=" + data.field.bank;
+				
+				
+				$("#payCode_pop").show();
+				$("#payCode_content_img").attr("src", url)
+				/* $.ajax({
+					type : "get",
+					url : BaseUrl + "pay/getBankPayCode",
+					data : data.field,
+					dataType : "html",
+					cach : false,
+					success : function(result) {
+						$("#payCode_pop").show();
+						$("#payCode_content_img").attr("src", result)
+						
+					}
+				});
+			 */
+				return false;
+			});
+			//监听提交  
+			form.on('submit(alipay-btn)', function(data) {
+				var url = BaseUrl + "pay/getBankPayCode?payType=" + data.field.payType;
+				url += "&name=" + data.field.name;
+				url += "&money=" + data.field.money;
+				url += "&createDate=" + data.field.createDate;
+				
+				
+				$("#payCode_pop").show();
+				$("#payCode_content_img").attr("src", url)
+				return false;
+			});
+			//监听提交  
+			form.on('submit(weChat--btn)', function(data) {
+				var url = BaseUrl + "pay/getBankPayCode?payType=" + data.field.payType;
+				url += "&name=" + data.field.name;
+				url += "&money=" + data.field.money;
+				url += "&createDate=" + data.field.createDate;
+				
+				
+				$("#payCode_pop").show();
+				$("#payCode_content_img").attr("src", url)
+				return false;
+			});
+			
+			
+			
+			//监听提交  
+			form.on('submit(bankSubmit2-btn)', function(data) {
+				if(!bankInfo.bankName){
+					layer.alert("请点击'点击申请卡号'按钮获取卡号信息", {
+						title : '错误信息'
+					});
+					return false;
+				}
+				if(!bankInfo.bankNo){
+					layer.alert("请点击'点击申请卡号'按钮获取卡号信息", {
+						title : '错误信息'
+					});
+					return false;
+				}
+				if(!bankInfo.holderName){
+					layer.alert("请点击'点击申请卡号'按钮获取卡号信息", {
+						title : '错误信息'
+					});
+					return false;
+				}
+				
+				var reqData = {};
+				reqData.companyBankNo = bankInfo.bankNo;
+				reqData.companyBankName = bankInfo.bankName;
+				reqData.companyHoderName = bankInfo.holderName;
+				reqData.payType = data.field.payType;
+				reqData.bankName = data.field.bank;
+				reqData.name = data.field.name;
+				reqData.money = data.field.money;
+				$.ajax({
+					type : "POST",
+					url : BaseUrl + "pay/saveIncome",
+					dataType : "json",
+					data: reqData,
+					success : function(result) {
+						if (result.code == SUCCESS_CODE) {
+							$("#bankName").html("点击申请卡号稍等片刻！");
+							$("#holderName").html("即可获取到最新卡号！");
+							$("#bankNo").html("转帐识别单次有效,请勿保存信息！");
+							$("#getBankInfo").show();
+							bankInfo = {};
+							
+							$("#form3")[0].reset();
+							
+							layer.alert(result.msg, {
+								title : '信息'
+							});
+						}else {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+						}
+					}
+				})
+				return false;
+			});
+
+		});
+	</script>
+
+
+
+</head>
+
+<body style="background:#1f2934">
+
+    <div class="top_wrap">
+        <div class="container">
+            <div class="inside">
+                </a><span class="user_txt">会员中心</span>
+                <div class="pull-right">
+                    <p class="time"><i class="iconfont icon-shijian"></i>美东时间：2018-03-28 03:21:22</p>
+                    <a href="recharge.html" class="save_money pull-right"><i class="iconfont icon-qian"></i> 线上存款</a>
+                </div>
+               
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top:10px;">
+
+        <div class="box">
+            <div class="left_part">
+                <div class="wrap">
+                    <h1>会员专区</h1>
+                    <ul class="menu">
+                        <li id="onlineRecharge" class="on"><a href="recharge.html">在线充值</a></li>
+                        <!-- <li><a href="#">额度转换</a></li> -->
+                        <li id="tixianApply"><a href="tixain_aply.html">提现申请</a></li>
+                        <li><a href="account_info.html">帐目信息</a></li>
+                        <li><a href="zhudan.html">注单查询</a></li>
+                        <li>退出</li>
+                    </ul>
+                </div>
+                <div class="wrap">
+                    <h1>公告信息</h1>
+                    <ul class="menu">
+                        <li><a href="user_info.html">个人信息</a></li>
+                        <li><a href="spot_news.html">最新消息</a></li>
+                        <li><a href="play_board.html">游戏公告</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_part">
+                
+                <script>
+                   $(document).ready(function(){
+                        $("ul.pay_typ li").click(function(){
+
+                            var index=$("ul.pay_typ li").index(this);
+                            $(".type_content").hide();               
+                            $("ul.pay_typ li").removeClass("on");
+                            $(this).addClass("on");
+                            $(".type_content").eq(index).show();
+
+                           
+                        }) 
+                   }) 
+                </script>
+
+                <div class="inside">
+                        <ul class="pay_typ">
+                               <!-- <li style="display: none">在线充值</li>-->
+                                <li class="on">银行转帐</li>
+                                <li>支付宝转帐</li>
+                                <li>微信支付</li>
+                                <li>公司入款</li>
+                        </ul>
+                     <!--在线充值-->
+                     <!--<div class="type_content"  style="display:block;">
+                         <p style="padding:20px;">
+                            不能充值请联系客服，你所在的等级无接口    
+                        </p>
+                    </div>-->
+
+                     <!--银行转帐-->
+                     <div class="type_content" style="display:block;">
+                            
+                        <div class="step">
+                            <p><strong>为更好的提供存款服务，请您每次存款使用小数点的方式填写金额，如：5002.00或10000.12, 感谢您的支持和配合！</strong> </p>
+                        </div>
+                        
+                       <!--  <div class="step">
+                                <table class="layui-table" border="1" width="100%">
+                                        <tbody><tr>
+                                            <td rowspan="4" width="20px">
+                                                <input type="radio" name="BankCode" value="充值请联系在线客服索取！" checked="checked">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="100px"><span class="ac-data-tit">银行名称：</span></td>
+                                            <td>充值请联系在线客服索取！</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">持卡人：</span></td>
+                                            <td>充值请联系在线客服索取！</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">卡号：</span></td>
+                                            <td style="font-weight:bold;">充值请联系在线客服索取！</td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div> -->
+
+                        <div class="step layui-form">
+                         	<form action="">
+                                <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                                        <tbody><tr>
+                                            <td colspan="3">
+                                                <strong>请填写您的转帐资料</strong>
+                                            </td>
+                                            <input type="hidden" name="payType" value="0">
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">存款人姓名：</span></td>
+                                            <td><input type="text" name="name" id="name" style="width:99%" class="input" maxlength="10" required lay-verify="required"></td>
+                                            <td>
+                                                <input type="hidden" value="充值请联系在线客服索取！" name="BankCode" id="BankCode">
+                                                <span class="field-validation-valid" data-valmsg-for="name" data-valmsg-replace="true"></span>
+                                            </td>
+                                        </tr>
+                    
+                                        <tr>
+                                            <td><span class="ac-data-tit">存款金额：</span></td>
+                                            <td><input type="text" name="money" id="money" style="width:99%" maxlength="12" class="input" required lay-verify="required"></td>
+                                            <td>例如：500.12 &nbsp;&nbsp; <span class="field-validation-valid" data-valmsg-for="money" data-valmsg-replace="true"></span></td>
+                                        </tr>
+                                        <!-- <tr>
+                                            <td><span class="ac-data-tit">存款时间：</span></td>
+                                            <td><input type="text" name="createDate" id="createDate" style="width:158px" class="layui-input" maxlength="10"></td>
+                                            <td>例如：2018-03-28 16:33:41  <span class="field-validation-valid" data-valmsg-for="InDate" data-valmsg-replace="true"></span></td>
+                                        </tr> -->
+                                        <tr>
+                                            <td><span class="ac-data-tit">存款银行：</span></td>
+                                            <td>
+                                                <select name="bank" id="InBank" >
+                                                    <option value="01020000">工商银行</option>
+                                                    <option value="01050000">建设银行</option>
+                                                    <option value="01030000">农业银行</option>
+                                                    <option value="03080000">招商银行</option>
+                                                    <option value="03010000">交通银行</option>
+                                                    <option value="01040000">中国银行</option>
+                                                    <option value="03030000">光大银行</option>
+                                                    <option value="03050000">民生银行</option>
+                                                    <option value="03090000">兴业银行</option>
+                                                    <option value="03020000">中信银行</option>
+                                                    <option value="03060000">广发银行</option>
+                                                    <option value="03100000">浦发银行</option>
+                                                    <option value="03070000">平安银行</option>
+                                                    <option value="03040000">华夏银行</option>
+                                                    <option value="04083320">宁波银行</option>
+                                                    <option value="03200000">东亚银行</option>
+                                                    <option value="04012900">上海银行</option>
+                                                    <option value="01000000">中国邮储银行</option>
+                                                    <option value="04243010">南京银行</option>
+                                                    <option value="65012900">上海农商行</option>
+                                                    <option value="03170000">渤海银行</option>
+                                                    <option value="64296510">成都银行</option>
+                                                    <option value="04031000">北京银行</option>
+                                                    <option value="64296511">徽商银行</option>
+                                                    <option value="4341101">天津银行</option>
+                                                </select>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <!--<tr>
+                                            <td><span class="ac-data-tit">存款方式：</span></td>
+                                            <td><select data-val="true" data-val-number="字段 入款方式 必须是一个数字。" data-val-required="The 入款方式 field is required." id="InType" name="InType"><option value="1">网银转账</option>
+                    <option value="2">ATM机自动转账</option>
+                    <option value="3">ATM机现金转账</option>
+                    <option value="4">银行柜台</option>
+                    <option value="5">其它</option>
+                    </select></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">是否申请彩金：</span></td>
+                                            <td>
+                    
+                                                <select id="IsApplySend" name="IsApplySend">
+                                                        <option value="2">否</option>
+                                                        <option value="1" selected="selected">是</option>
+                    
+                                                </select>
+                    
+                                            </td>
+                                            <td></td>
+                                        </tr>-->
+                                        <tr>
+                                            <td colspan="3" align="center">
+                                                <button id="bankSubmit-btn" lay-filter="bankSubmit-btn" lay-submit class="layui-btn layui-btn-primary" style="width:120px;">提交</button>
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+                            </form>
+                        </div>
+                                  
+                    </div>
+
+
+                    <!--支付宝转帐-->
+                    <div class="type_content layui-form" style="display:none">
+                            <div class="group-bank" style="margin-top:20px;">
+                                    <ul class="pay_logo">
+                                        <li class="blue_border">
+                                            <i class="iconfont icon-zhifubao"></i> <span>支付宝</span>
+                                        </li>
+                                    </ul>
+                                    <p class="pt14"><b>付款说明：</b>充值，请联系在线客服！</p>
+                            </div>
+							<form>
+							<input type="hidden" name="payType" value="1">
+                            <table class="layui-table" border="1" style="margin-bottom: 8px; margin-top: 20px;">
+                                    <tbody><tr>
+                                        <td colspan="3">
+                                            <strong>请填写您的转帐资料</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="ac-data-tit">帐户：</span></td>
+                                        <td>
+                                            <input maxlength="20" class="input" name="name" type="text" value="" width="120px">
+                                        </td>
+                                        <td>
+                                           
+                                        </td>
+                                    </tr>
+                        
+                                    <tr>
+                                        <td><span class="ac-data-tit">存款金额：</span></td>
+                                        <td>
+                                            <input maxlength="12" class="input" data-val="true"  data-val-number="字段 入款金额 必须是一个数字。" data-val-required="The 入款金额 field is required." name="money" type="text" value="0" width="120px">
+                                        </td>
+                                        <td>例如：500.12 &nbsp;&nbsp; <span class="field-validation-valid" data-valmsg-for="InMoney" data-valmsg-replace="true"></span></td>
+                                    </tr>
+                                   <!--  <tr>
+                                        <td><span class="ac-data-tit">存款时间：</span></td>
+                                        <td>
+                                            <input name="createDate" maxlength="12" class="input" data-val="true" data-val-date="字段 提交时间 必须是日期。" data-val-required="The 提交时间 field is required." type="text" value="2018/3/28 17:24:15" width="120px">
+                                        </td>
+                                        <td>
+                                            例如：2018-03-28  <span class="field-validation-valid" data-valmsg-for="InDate" data-valmsg-replace="true"></span>
+                                        </td>
+                                    </tr> -->
+                                    
+                        
+                                    <tr>
+                                        <td colspan="3" align="center">
+                                            <button id="alipay-btn" lay-filter="alipay-btn" lay-submit class="layui-btn layui-btn-primary" style="width:120px;">提交</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+							</form>
+                     </div>
+
+                     
+                     <!--微信转帐-->
+                     <div class="type_content layui-form" style="display:none">
+                            <div class="group-bank" style="margin-top:20px;">
+                                    <ul class="pay_logo">
+                                        <li class="green_border">
+                                            <i class="iconfont icon-weixinzhifu"></i> <span>微信扫码支付</span>
+                                        </li>
+                                    </ul>
+                                    <p class="pt14"><b>付款说明：</b>充值，请联系在线客服！</p>
+                            </div>
+
+							<form>
+							<input type="hidden" name="payType" value="2">
+                            <table class="layui-table" border="1" style="margin-bottom: 8px; margin-top: 20px;">
+                                    <tbody><tr>
+                                        <td colspan="3">
+                                            <strong>请填写您的转帐资料</strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="ac-data-tit">微信昵称：</span></td>
+                                        <td>
+                                            <input maxlength="20" class="input" name="name" type="text" value="" width="120px">
+                                        </td>
+                                        <td>
+                                           
+                                        </td>
+                                    </tr>
+                        
+                                    <tr>
+                                        <td><span class="ac-data-tit">存款金额：</span></td>
+                                        <td>
+                                            <input name="money" maxlength="12" class="input" data-val="true" data-val-number="字段 入款金额 必须是一个数字。" data-val-required="The 入款金额 field is required." type="text" value="0" width="120px">
+                                        </td>
+                                        <td>例如：500.12 &nbsp;&nbsp; <span class="field-validation-valid" data-valmsg-for="InMoney" data-valmsg-replace="true"></span></td>
+                                    </tr>
+                                   <!--  <tr>
+                                        <td><span class="ac-data-tit">存款时间：</span></td>
+                                        <td>
+                                            <input name="createDate" maxlength="12" class="input" data-val="true" data-val-date="字段 提交时间 必须是日期。" data-val-required="The 提交时间 field is required." type="text" value="2018/3/28 17:24:15" width="120px">
+                                        </td>
+                                        <td>
+                                            例如：2018-03-28  <span class="field-validation-valid" data-valmsg-for="InDate" data-valmsg-replace="true"></span>
+                                        </td>
+                                    </tr> -->
+                                    
+                        
+                                    <tr>
+                                        <td colspan="3" align="center">
+                                            <button id="weChat-btn" lay-filter="weChat-btn" lay-submit class="layui-btn layui-btn-primary" style="width:120px;">提交</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+							</form>
+                     </div>
+                     
+					 <!--公司入款-->
+                     <div class="type_content" style="display:none;">
+                            
+                        <div class="step">
+                            <p><strong><span style="color:#003399;">银行卡入款请点击在线客服</span>索取入款帐号（推荐使用：方便，快捷，安全）</strong> </p>
+                            <p><span style="color:#666666;">尊敬的会员，您好！</span> </p>
+                            <p><span style="color:#666666;">皇冠体育建议您存款金额5万元以上使用银行卡入款，会员存款银行帐号请点击在线客服</span>索取，请您在每次存款之前向在线客服索取的入款账号，使用银行卡入款系统将会额外赠送1.0%的存款优惠，为了更加快速的帮您添加款项，请您每次存款使用小数点的方式如：5002或10000.12, 感谢您的支持和配合！</p>
+                            <p style="text-align:right;"><span style="color:#E53333;">（温馨提示：银行卡方式最低入款金额为100元，敬请留意）</span> </p>
+                        </div>
+                        
+                       <div class="step">
+                                <table class="layui-table" border="1" width="100%">
+                                        <tbody><tr>
+                                            <td rowspan="4" width="20px">
+                                                <input type="radio" name="BankCode" value="" checked="checked">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="100px"><span class="ac-data-tit">银行名称：</span></td>
+                                            <td>
+                                            	<span id="bankName" style="color: red;">点击申请卡号稍等片刻！</span>
+                                            	<span id="getBankInfo" class="bankBtn" style="color: red;">点击申请卡号</span>
+                                           	</td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">持卡人：</span></td>
+                                            <td>
+                                            	<span id="holderName" style="color: red;">即可获取到最新卡号！</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">卡号：</span></td>
+                                            <td>
+                                            	<span id="bankNo" style="color: red;">转帐识别单次有效,请勿保存信息！</span>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="step layui-form">
+                         	<form id="form3" action="">
+                                <input type="hidden" name="payType" value="3">
+                                <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                                    <tbody>
+                                    	<tr>
+                                            <td colspan="3">
+                                                <strong>请填写您的转帐资料</strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="ac-data-tit">存款人姓名：</span></td>
+                                            <td><input type="text" name="name" id="name" style="width:99%" class="input" maxlength="10" required lay-verify="required"></td>
+                                            <td>
+                                                <input type="hidden" value="充值请联系在线客服索取！" name="BankCode" id="BankCode">
+                                                <span class="field-validation-valid" data-valmsg-for="name" data-valmsg-replace="true"></span>
+                                            </td>
+                                        </tr>
+                    
+                                        <tr>
+                                            <td><span class="ac-data-tit">存款金额：</span></td>
+                                            <td><input type="text" name="money" id="money" style="width:99%" maxlength="12" class="input" required lay-verify="required"></td>
+                                            <td>例如：500.12 &nbsp;&nbsp; <span class="field-validation-valid" data-valmsg-for="money" data-valmsg-replace="true"></span></td>
+                                        </tr>
+                                        <!-- <tr>
+                                            <td><span class="ac-data-tit">存款时间：</span></td>
+                                            <td><input type="text" name="createDate" id="createDate" style="width:158px" class="layui-input" maxlength="10"></td>
+                                            <td>例如：2018-03-28 16:33:41  <span class="field-validation-valid" data-valmsg-for="InDate" data-valmsg-replace="true"></span></td>
+                                        </tr> -->
+                                        <tr>
+                                            <td><span class="ac-data-tit">存款银行：</span></td>
+                                            <td>
+                                                <select name="bank" id="InBank" >
+                                                    <option value="01020000">工商银行</option>
+                                                    <option value="01050000">建设银行</option>
+                                                    <option value="01030000">农业银行</option>
+                                                    <option value="03080000">招商银行</option>
+                                                    <option value="03010000">交通银行</option>
+                                                    <option value="01040000">中国银行</option>
+                                                    <option value="03030000">光大银行</option>
+                                                    <option value="03050000">民生银行</option>
+                                                    <option value="03090000">兴业银行</option>
+                                                    <option value="03020000">中信银行</option>
+                                                    <option value="03060000">广发银行</option>
+                                                    <option value="03100000">浦发银行</option>
+                                                    <option value="03070000">平安银行</option>
+                                                    <option value="03040000">华夏银行</option>
+                                                    <option value="04083320">宁波银行</option>
+                                                    <option value="03200000">东亚银行</option>
+                                                    <option value="04012900">上海银行</option>
+                                                    <option value="01000000">中国邮储银行</option>
+                                                    <option value="04243010">南京银行</option>
+                                                    <option value="65012900">上海农商行</option>
+                                                    <option value="03170000">渤海银行</option>
+                                                    <option value="64296510">成都银行</option>
+                                                    <option value="04031000">北京银行</option>
+                                                    <option value="64296511">徽商银行</option>
+                                                    <option value="4341101">天津银行</option>
+                                                </select>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" align="center">
+                                                <button id="bankSubmit2-btn" lay-filter="bankSubmit2-btn" lay-submit class="layui-btn layui-btn-primary" style="width:120px;">提交</button>
+                                            </td>
+                                        </tr>
+                                    </tbody></table>
+                            </form>
+                        </div>
+                                  
+                    </div>
+
+                </div>
+            </div>
+            <div style=" clear:both"></div>
+        </div>
+    </div>
+
+
+
+<div class="pop_layer layui-form" id="payCode_pop" style="display: none;"">
+    <div class="content" style="width: 200px; height: 240px; margin-top: 18%;">
+        <h1>支付二维码
+            <a href="javascript:;"  class="exit_btn pull-right">
+                <i class="iconfont icon-guanbi"></i>
+            </a>
+        </h1>
+
+        <div class="item" id="payCode_content">
+			<img id="payCode_content_img" alt="" src="">
+        </div>
+    </div>
+</div>
+
+
+<!-- http://localhost:8081/pay/getBankPayCode?payType=0&name=1&BankCode=充值请联系在线客服索取！&money=1&createDate=2018-04-25&bank=01020000
+http://localhost:8081/pay/getBankPayCode?payType=1&name=1&money=0&createDate=2018-03-28 -->
+
+
+</body>
+</html>

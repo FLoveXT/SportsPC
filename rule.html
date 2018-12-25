@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>皇冠体育</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="layui/css/layui.css" rel="stylesheet">
+    <link href="css/iconfont.css" rel="stylesheet">
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="layui/layui.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/getvalue.js"></script>
+    <script src="js/daili_switch.js"></script>
+    <style>
+        .layui-form-label {
+            width: 120px;
+            color: #c8c8c8;
+        }
+
+        .layui-form-label span {
+            padding-right: 4px;
+        }
+
+        .layui-input {
+            background: #d2d2d2;
+            width: 240px;
+        }
+
+        .tint {
+            padding-left: 150px;
+            padding-top: 4px;
+        }
+
+        .yellow {
+            color: #ff5722
+        }
+    </style>
+
+
+    <script>
+        var daili_indx;
+        var daili_indx=$.query.get("daili");
+    </script>
+</head>
+
+<body style="background:#1b242e">
+    <!--login being-->
+    <div class="topbar" id="header">
+        <div class="link">
+            <ul>
+                <li class="gtip" original-title="收藏金沙娱乐场">
+                    <i class="iconfont icon-shoucang" onclick="alert('「您使用的浏览器不支援此功能，请按“Ctrl+D”键手动加入收藏。」');"></i>
+                </li>
+                <li class="gtip" original-title="设为首页">
+                    <i class="iconfont icon-shouye" onclick="alert('「您使用的浏览器不支援此功能，请手动进行设置。」');"></i>
+                </li>
+                <li class="gtip" original-title="保存到桌面">
+                    <i class="iconfont icon-baocun"></i>
+                </li>
+                <li>
+                    <a id="dlzcid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">代理注册</a>
+                </li>
+                <li>
+                     <a id="hzjmid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">合作加盟</a>
+                </li>
+                <li>
+                    <a id="dldrid" href="partners.html?daili=3" target="_blank" style="color: rgb(255, 0, 0);">代理登入</a>
+                </li>
+                <li>
+                    <a href="appDownload.html" target="_blank">APP手机下载</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="operate">
+            <!--未登录 begin  -->
+            <ul class="no_login" style="display:block" id="no_login">
+                <li class="inp">
+                    <i class="iconfont icon-username"></i>
+                    <input id="login_accout" type="text" class="_inp" placeholder="用户" maxlength="20">
+                </li>
+                <li class="inp">
+                    <i class="iconfont icon-icon-lock"></i>
+                    <input id="login_pwd" type="password" class="_inp" placeholder="密码" maxlength="20">
+                </li>
+
+                <li class="captcha">
+                    <input id="verify_code" class="_inp" type="text" name="BETVALIDATECODEL" maxlength="5" placeholder="输入验证码">
+                </li>
+                <li class="captcha">
+                    <img id="verify_code_img" class="code" src="images/code.jpg"  style="width:50px;height:30px;">
+                </li>
+                <li>
+                    <a href="javascript:;" class="btn_login" onclick="BetLogin()">立即登录</a>
+                </li>
+                <li>
+                    <a href="register.html" class="btn_login" onclick="">注册</a>
+                </li>
+                <li style="padding-right:10px;">
+                    <a href="javascript:;" onclick="alert('「请联系在线客服找回密码！」');" class="forgot_btn">忘记密码</a>
+                </li>
+
+
+            </ul>
+
+            <!--未登录 end  -->
+
+            <!--已登录 begin  -->
+            <ul class="logined" style="display:none;" id="logined">
+                <li class="balance">帐户余额：
+                    <b id="topBalance"></b>￥</a>
+                </li>
+               <li id="saveMoney" class="money">
+                    <a href="admin/member/recharge.html"  target="view_window">存款</a>
+                </li>
+                <li id="getMoney" class="money">
+                    <a href="admin/member/tixain_aply.html" target="view_window">取款</a>
+                </li>
+                <li>
+                    <a href="admin/member/user_info.html" class="btn_login"  target="view_window" style="position:relative;top:7px;">个人中心</a>
+                </li>
+                <li class="user">
+                    <a href="javascript:;" class="user_icon">
+                        <i class="iconfont icon-user"></i>
+                        <span id="member_name">amber</span>
+                        <i class="iconfont icon-xiala"></i>
+                    </a>
+                    <div class="drop" style="display:none;">
+                        <!-- <a href="#"> <i class="iconfont icon-icon-test"></i>额度转换</a> -->
+                        <a href="admin/member/user_info.html?flag=updatePwd">
+                            <i class="iconfont icon-mima"></i>修改密码</a>
+                        <a href="javascript:;" onclick="EixtLogin()">
+                            <i class="iconfont icon-tuichu6"></i>退出</a>
+                    </div>
+                </li>
+                <li class="info">
+                    <a href="javascript:;" class="email">
+                        <i class="iconfont icon-email"></i>
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <!--login end-->
+
+    <!--menu begin-->
+    <div class="menu">
+        <div class="wrap">
+            <div class="logo">
+                <img src="images/logo.jpg" width="140">
+            </div>
+            <div class="nav">
+                    <ul>
+                            <li>
+                                <a href="index.html" target="">
+                                    <i class="iconfont icon-home"></i> 首页</a>
+                            </li>
+                            <li>
+                                <a href="game.html" target="">
+                                    <i class="iconfont icon-kickball"></i> 体育赛事</a>
+                            </li>
+                            <li>
+                                <a href="appDownload.html" target="">
+                                    <i class="iconfont icon-mobile_pay"></i> 手机下注</a>
+                            </li>
+                            <li>
+                                <a href="partners.html" target="">
+                                    <i class="iconfont icon-user"></i> 代理中心</a>
+                            </li>
+                            <li>
+                                <a href="help.html" target="">
+                                    <i class="iconfont icon-help"></i> 帮助中心</a>
+                            </li>
+                            <li>
+                                <a href="#" target="" class="zixun_btn">
+                                    <i class="iconfont icon-kefu"></i> 在线客服</a>
+                            </li>
+                        </ul>
+
+            </div>
+        </div>
+    </div>
+    <!--menu end-->
+
+    <!-- banner begin -->
+    <DIV style="background:#000;">
+
+        <div class="wrap">
+            <img src="images/partners_banner.jpg">
+        </DIV>
+    </DIV>
+    <!-- banner end  -->
+
+    <!--客服-->
+    <div class="slider_kefu">
+        <div class="inside">
+            <img src="images/kefu_img.png">
+            <div align="center" class="zixun">
+                <a id="zixun_btn"  href="javascript:;" class="zixun_btn">点击咨询 </a>
+            </div>
+            <div align="center" class="zixun mt10">
+                <img src="images/kef.jpg">
+            </div>
+            <div>
+                <a href="javascript:;" class="close_btn">
+                    <i class="iconfont icon-guanbi"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+
+            $(".partners_menu li").click(function () {
+                var index = $(".partners_menu li").index(this);
+                $(".partners_menu li").removeClass("on");
+                $(this).addClass("on");
+                $(".partners_content").hide();
+                $(".partners_content").eq(index).show();
+            })
+        })
+    
+    </script>
+
+    <div class="partners_box">
+        <div class="wrap">
+            
+            <script>
+
+                $(document).ready(function(){
+                    $(".side_menu ul li").click(function(){
+                        var index=$(".side_menu ul li").index(this);
+                        $(".side_menu ul li").removeClass("on");
+                        $(this).addClass("on");
+                        $(".article").hide();
+                        $(".article").eq(index).show();
+
+                        
+                        
+
+                    })  
+                })
+               
+
+            </script>
+            <div class="help_part">
+                <div  class="article" style="margin-bottom: 90px;">
+                       <h1 style="font-size: 16px; text-align: center;">体育规则</h1>
+<p style="text-align: center;">一般体育说明
+最后更新日期：06/03/2018</p>
+
+<p style="font-size: 16px;">概述</p>
+<p>此规则与条款将适用于本公司所有的投注种类。会员们有责任确保您获知所有的规则与条款，我们保留随时修改条款的权利，并且会将修改的内容公布在本网站上。公布在网站公告上的信息可作为投注附加的规则与条款，若有任何差异或矛盾的地方，将以附加信息为准。</p>
+<p>本公司对此条款视为公平公正的，若您有任何意见或疑问，您可以联络我们的客服部，我们的客服团队将热诚协助每位客户，并确保能及时友善的解决您的问题。对于任何错误或争论，我们的客服团队将竭力提供服务。</p>
+<p>所有的条款用于在会员与公司之间建立一般的原则。对产生的任何争议，希望通过该条款让双方都得到满意的解决方案。</p>
+<p>1. 一般体育规则</p>
+<p>所有在本公司进行的投注都需要依照以下规则与条款处理。在个别体育项目里注明的规则将视为体育主要规则:</p>
+<p>•	所有投注项目的最高和最低投注额将由公司决定，如有任何更改无需提前通知。</p>
+<p>•	会员申请账户时需提供正确的个人信息，本公司对提供伪造或错误信息的账户将不负任何责任。</p>
+<p>•	会员将全权负责账户提交的所有交易。在投注前请仔细检查选项，一旦投注提交成功后，将无法更改或取消。公司对会员自身原因造成的遗漏或重复投注不负任何责任。会员可以在"账户历史"中查看详情确保所有提交的注单已成功。</p>
+<p>•	在任何投诉中，如果在公司的数据库中没有存储任何记录，公司将不接受也不认可任何会员提供的复印件或单据。</p>
+<p>•	公司保留在任何时候关闭或冻结会员账号的权利。</p>
+<p>•	公司保留在任何时候暂停/中止会员对任何盘口进行投注的权利。</p>
+<p>•	公司保留对已预先知道赛果的投注作出取消的权利。如果由于"滚球现场"延迟而引起盘口的赔率错误，此期间的注单将视为无效。</p>
+<p>•	关于赛事的信息，例如日期，时间,比分，数据统计，红牌和中立场等信息仅供会员参考，公司对提供此信息的准确性不负任何责任。</p>
+<p>•	如果比赛或赛事取消，中断或延迟并且没有在官方指定开球时间的36小时内重新开始，所有该场赛事的投注即被视为无效且取消，除非在个别体育规则里另有指定注明。 某些无条件终止的盘口将会相应地结算。单独的体育规则中对此类盘口的结算程序做了说明。公司取消该赛事所有注单的结果被视为最终决定，无需参考官方赛事裁判或相关部门的决定。连串投注将会继续按照注单剩余赛事的赛果结算，该取消赛事的赔率将会按照1计算。</p>
+<p>•	如果比赛或是赛事取消，所有该场赛事的投注即被视为无效且取消，除非在个别体育规则里另有指定注明。对于取消的定义和处理本公司拥有最终解释权。</p>
+<p>•	如果对其它语言版本的信息或球赛队名有争议，请以英文网站的名称为准。</p>
+<p>•	由以下事件造成的任何损失，公司不赋予任何责任:</p>
+<p>•	公司的网站、服务器或网络中断。</p>
+<p>•	公司数据库、服务器丢失信息或信息遭受破坏。</p>
+<p>•	不法分子攻击网站、服务器或网络供应商。</p>
+<p>•	进入网站时由于网络供应商原因造成的网络缓慢。</p>
+<p>•	如果系统发生不可预知的事件而导致已投注的注单出现争议，公司将会根据数据库的资料为准。</p>
+<p>•	如果对此规则与条款的内容有任何疑义，请以公司的解释为准。</p>
+<p>2. 赛果与派彩</p>
+<p>•	赛果均在赛事结束后判定，除非在个别体育规则里另有注明。赛果公布72小时后，若对任何赛果有争议，本公司将不认可。在赛果公布72小时内,除了任何体育纪律委员会所重新裁决之赛果，本公司只会修正人为、系统或参考赛果的相关网页失误等原因的错误。</p>
+<p>•	投注通常在赛事结束后派彩。但考虑到会员的利益，某些投注会在官方公布赛事结果之前就进行派彩。如果赛事出现取消，中断或延迟的情况，将会另作说明。为此，公司保留对此而造成的错误进行更改的权利。</p>
+<p>•	派彩是根据官方来源或相关体育权威机构判定的结果为准。如果无法从相关体育权威机构判定结果，公司将会根据其他数据来源判定结果进行派彩，同时此数据会在被认定为合理的前提下。</p>
+<p>•	所有的交易将以公司最新备份数据记录为准，公司不接纳任何投诉或争议，除非会员提供交易记录的截图或影印证据，否则公司的数据记录将作为最终证明。</p>
+<p>3. 滚球类型投注规则</p>
+<p>滚球投注是指对正在进行比赛的赛事进行投注。注单会在比赛开始后开始接收并且在盘口关盘后停止所有交易。个别体育会开出多个滚球种类的盘口供投注。</p>
+<p>•	会员在投注滚球时，如果赛场中出现以下几种情况，会员的投注将会维持在'危险球-待确认' 的状态。危险球的定义有:</p>
+<p>•	12码罚球</p>
+<p>•	自由球(攻方在守方禁区附近的自由球)</p>
+<p>•	角球/掷入球(攻方靠近守方禁区的掷入球)</p>
+<p>•	A队向B队禁区附近进攻(或是B队在A队的禁区附近进攻)</p>
+<p>•	投注提交时如果遇到危险球的情况，注单上会出现"危险球-待确认"的状态。这表示注单在等待被确认或可能被取消。危险期一旦通过，并且期间没有任何显着会影响赛事状态的情况，注单就会被确认。</p>
+<p>•	如果危险期内遭到进球或其他影响赛事状况的情况，比如: 红卡，所有待确认注单将会被取消。</p>
+<p>•	在滚球投注中，本公司需强调以下条款，确保投注是按照正确的时间、金额和在正确的情况下进行:</p>
+<p>•	比赛赛果和入球时间以本公司网站公布的为准，我们不参考任何其它官方网站，体育网站，或"即时比分"等网站公布的赛果或入球时间。</p>
+<p>•	如果有合理的理由怀疑投注是在比赛时某个事件发生后才提交的，本公司将保留取消此注单且不需提供任何理由和证明的权利。</p>
+<p>•	如果出现网站无法更新比分、赔率或盘口的情况，本公司保留权利取消所有未确认且处理中的注单。</p>
+<p>4. 有关时间规则</p>
+<p>•	如比赛在法定时间提前进行，在比赛开始前的投注依然有效，在比赛开始后的所有投注均视为无效(滚球投注另作别论)。</p>
+<p>•	足球赛事的正常完场时间包括任何球员伤停补时。</p>
+<p>•	除非在个别体育规则另有注明，加时得分则不计算在正常完场时间内。</p>
+<p>5. 并列名次规则</p>
+<p>•	在某特定赛事如果产生两名或以上的获胜者，赢利将会减少。注单派彩将按照投注本金除以获胜者人数后乘上赔率，再减去用于计算的投注本金。</p>
+<p>•	范例：某场赛果产生了三名获胜者，投注本金将除以三， 会员的赢利便是以三分之一投注本金来计算。</p>
+<p>6. 场地变更</p>
+<p>•	如果比赛场地有变更（主客队调换），所有此注单将被取消。</p>
+<p>•	本公司保留权利取消因更换场地而可能对赛事结果有影响的注单，例如：网球比赛更换场地表面。</p>
+<p>•	若比赛原定在中立场进行改为在非中立场进行且在本公司判定下对比赛没有影响，注单将继续保持有效。</p>
+<p>•	在个别体育项目里若有特别注明将覆盖以上规则。</p>
+<p>7. 错误</p>
+<p>•	本公司力求错误发生的机率保持最低，但若有注单显然是在盘口有错误的情况下提交，我们将保留取消此注单的权利。错误的情况包括：</p>
+<p>•	赔率错误 （和市场上提供的有明显差别）；</p>
+<p>•	盘口信息错误， 例如：让球数，大小数等；</p>
+<p>•	赛事信息错误，例如：参赛队名或队员， 赛事日期或开赛时间。</p>
+<p>•	若因遇到以上的情况而需取消任何注单，我们会尽可能的与客户取得联系，有关讯息也会及时在公告栏里发布。</p>
+<p>8. 异常投注行为</p>
+<p>对任何怀疑在投注时涉嫌作弊或破坏本公司投注平台的会员，公司有权在毫无警告或通知下取消此会员所有的注单并且冻结账户。异常行为包括使用任何设备，自动设备，软件，程序等方式干涉本网站的运作。</p>
+                </div>
+
+
+
+              
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- <div class="footer">
+
+        <div class="bottom_menu">
+            <a href="#" class="first">关于我们</a>
+            <a href="#">合作加盟</a>
+            <a href="">体育赛事</a>
+            <a href="#">代理中心</a>
+            <a href="#">帮助中心</a>
+        </div>
+
+        <div class="copyright">© 2018 皇冠体育 版权所有</div>
+    </div> -->
+    <script>
+        $(document).ready(function () {
+            $(".close_btn").click(function () {
+                $(".slider_kefu").hide();
+            })
+        })
+
+        layui.use('form', function () {
+            var form = layui.form;
+
+        });
+
+    </script>
+
+</body>

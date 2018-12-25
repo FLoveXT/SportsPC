@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>个人信息</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="../../layui/css/layui.css" rel="stylesheet">
+    <link href="../../css/iconfont.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+
+    <script src="../../js/jquery-1.8.3.min.js"></script>
+    <script src="../../layui/layui.js"></script>
+    <script src="../../js/common.js"></script>
+
+    <style>
+        .layui-input,
+        .layui-select,
+        .layui-textarea {
+            border: 1px solid #cecece;
+        }
+
+        .input {
+            height: 28px;
+        }
+
+        .coloRed {
+            color: #ff6600;
+            margin-left: 4px;
+        }
+    </style>
+
+
+
+    <script>
+   		 var userStatus = {"0":"冻结", "1" : "正常", "2": "未审核", "3": "审核不通过"};
+        var user_info = {
+            //编辑资料
+            edit_Profile: function () {
+                $("#accounts").hide();
+                $("#edit_accounts").show()
+            },
+            back_Profile: function () {
+                $("#accounts").show();
+                $("#edit_accounts").hide()
+            },
+            edit_login_pwd: function () {
+
+                $("#accounts").hide();
+                $("#edit_login_pwd").show()
+
+            },
+            back_login_pwd: function () {
+                $("#accounts").show();
+                $("#edit_login_pwd").hide()
+
+            },
+            edit_getMoney_pwd: function () {
+                $("#accounts").hide();
+                $("#edit_getMoney_pwd").show()
+            },
+            back_getMoney_pwd: function () {
+                $("#accounts").show();
+                $("#edit_getMoney_pwd").hide()
+            }
+
+        }
+
+		$(function(){
+			var userInfo = getStorageUser();
+			getUserInfo(userInfo.id);
+			
+			
+			var flag = getUrlParam("flag");
+			if(flag){
+				if(flag == "updatePwd"){
+					$("#updatePwd").click();
+				}
+			}
+			
+			
+			//更新用户资料
+			$("#updateInfoBtn").click(function(){
+				var id = $("#userId").val();
+				var qq = $("#qq").val();
+				var reqData = {
+					id : id,
+					qq : qq
+				};
+				$.ajax({
+					type : "POST",
+					url : BaseUrl + "user/updateUserInfo",
+					data : reqData,
+					dataType : "json",
+					success : function(result) {
+						if (result.code == SUCCESS_CODE) {
+							getUserInfo(id)
+							user_info.back_Profile();
+						} else {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+						}
+					}
+				});
+			});
+			
+			
+		})
+		
+		function getUserInfo(id){
+        	$.ajax({
+				type : "GET",
+				url : BaseUrl + "user/getUserInfo",
+				dataType : "json",
+				success : function(result) {
+					if (result.code == SUCCESS_CODE) {
+						var user = result.result.user;
+						$("#userId").val(user.id);
+						$("#nameLabel").html(user.account);
+						$("#nameLabel2").html(user.account);
+						$("#realNameLabel").html(user.realName);
+						$("#realNameLabel2").html(user.realName);
+						$("#qqLabel").html(user.qq);
+						$("#emailLabel").html("");
+						$("#phoneLabel").html(user.phone);
+						$("#ipLabel").html(user.IP);
+						$("#loginTimeLabel").html(user.loginingTime);
+						$("#loginCountLabel").html(user.loginNum);
+						$("#statusLabel").html(userStatus[user.status]);
+						
+						$("#qq").val(user.qq);
+					} else {
+						layer.alert(result.msg, {
+							title : '错误信息'
+						});
+					}
+				}
+			});
+        }
+        
+        
+        layui.use('form', function () {
+        	var form = layui.form; 
+          	//自定义验证规则  
+          	form.verify({  
+        	  	pwd: function(value){  
+        		  	if(value.length < 6 || value.length >12){  
+        			  	return '须为6-12位英文或数字且符合0~9或a~z字元';  
+        		  	} 
+        		  	if(!new RegExp("^[a-zA-Z0-9]+$").test(value)){
+        			  	return '须为6-12位英文或数字且符合0~9或a~z字元';
+        		  	}
+        	  	} 
+         	 });
+          	
+           //更新用户密码
+           form.on('submit(updateUserPwd)', function(data){  
+        	   var id = $("#userId").val();
+				var oldPwd = $("#oldPwd").val();
+				var userPwd = $("#userPwd").val();
+				var userPwd2 = $("#userPwd2").val();
+				if(userPwd != userPwd2){
+					layer.alert("确认密码与新密码不一致", {
+						title : '错误信息'
+					});
+					return false;
+				}
+				
+				var reqData = {
+						id: id,
+						oldPwd : oldPwd,
+						pwd : userPwd,
+						truePwd : userPwd2,
+				};
+				$.ajax({
+					type : "POST",
+					url : BaseUrl + "user/updateLoginPwd",
+					data : reqData,
+					dataType : "json",
+					success : function(result) {
+						if (result.code == SUCCESS_CODE) {
+							$("#oldPwd").val("");
+							$("#userPwd").val("");
+							$("#userPwd2").val("");
+							user_info.back_login_pwd();
+						} else {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+						}
+					}
+				});
+          	  return false;  
+           }); 
+           
+           //更新取款密码
+           form.on('submit(updateBankPwd)', function(data){  
+        	   	var id = $("#userId").val();
+				var oldPwd = $("#oldBankPwd").val();
+				var bankPwd = $("#bankPwd").val();
+				var bankPwd2 = $("#bankPwd2").val();
+				if(bankPwd != bankPwd2){
+					layer.alert("确认密码与新密码不一致", {
+						title : '错误信息'
+					});
+					return false;
+				}
+				
+				var reqData = {
+						id: id,
+						oldPwd : oldPwd,
+						bankPwd : bankPwd,
+						trueBankPwd : bankPwd2,
+				};
+				$.ajax({
+					type : "POST",
+					url : BaseUrl + "user/updateBankPwd",
+					data : reqData,
+					dataType : "json",
+					success : function(result) {
+						if (result.code == SUCCESS_CODE) {
+							$("#oldBankPwd").val("");
+							$("#bankPwd").val("");
+							$("#bankPwd2").val("");
+							user_info.back_getMoney_pwd();
+						} else {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+						}
+					}
+				});  
+           }); 
+          	
+          }); 
+		</script>
+</head>
+
+<body style="background:#1f2934">
+
+    <div class="top_wrap">
+        <div class="container">
+            <div class="inside">
+                <span class="user_txt">会员中心</span>
+                <div class="pull-right">
+                    <p class="time">
+                        <i class="iconfont icon-shijian"></i>美东时间：2018-03-28 03:21:22</p>
+                    <a href="recharge.html" class="save_money pull-right">
+                        <i class="iconfont icon-qian"></i> 线上存款</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top:10px;">
+
+        <div class="box">
+            <div class="left_part">
+                <div class="wrap">
+                    <h1>会员专区</h1>
+                    <ul class="menu">
+                        <li id="onlineRecharge">
+                            <a href="recharge.html">在线充值</a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">额度转换</a>
+                        </li> -->
+                        <li id="tixianApply">
+                            <a href="tixain_aply.html">提现申请</a>
+                        </li>
+                        <li>
+                            <a href="account_info.html">帐目信息</a>
+                        </li>
+                        <li>
+                            <a href="zhudan.html">注单查询</a>
+                        </li>
+                        <li id="loginOut">退出</li>
+                    </ul>
+                </div>
+                <div class="wrap">
+                    <h1>公告信息</h1>
+                    <ul class="menu">
+                        <li class="on">
+                            <a href="user_info.html">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="spot_news.html">最新消息</a>
+                        </li>
+                        <li>
+                            <a href="play_board.html">游戏公告</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_part">
+                <h1>个人信息</h1>
+                <div class="inside">
+
+					<input id="userId" type="hidden">
+                    <!--帐号详情-->
+                    <div class="type" id="accounts">
+                        <h2 class="font20">账号详细</h2>
+                        <table border="1" width="100%" class="layui-table" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td class="tdtit">账号：</td>
+                                    <td><label id="nameLabel"></label></td>
+                                    <td class="tdtit"></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">真实姓名：</td>
+                                    <td><label id="realNameLabel"></label></td>
+                                    <td class="tdtit">QQ：</td>
+                                    <td><label id="qqLabel"></label></td>
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">邮箱：</td>
+                                    <td><label id="emailLabel"></label></td>
+                                    <td class="tdtit">电话：</td>
+                                    <td><label id="phoneLabel"></label></td>
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">上次登录IP：</td>
+                                    <td><label id="ipLabel"></label></td>
+                                    <td class="tdtit">上次登录时间：</td>
+                                    <td><label id="loginTimeLabel"></label></td>
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">登录次数：</td>
+                                    <td><label id="loginCountLabel"></label></td>
+                                    <td class="tdtit">状态：</td>
+                                    <td><label id="statusLabel"></label></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <button class="layui-btn layui-btn-primary" onclick="user_info.edit_Profile()">编辑资料</button>
+                            <button id="updatePwd" class="layui-btn layui-btn-primary" onclick="user_info.edit_login_pwd()">修改登录密码</button>
+                           <!--  <button class="layui-btn layui-btn-primary" onclick="user_info.edit_getMoney_pwd()">修改取款密码</button> -->
+                        </div>
+                    </div>
+
+                    <!--账号编辑-->
+                    <div class="type layui-form" id="edit_accounts" style="display:none;">
+                        <h2 class="font20">账号编辑</h2>
+                        <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td width="160">帐号：</td>
+                                    <td><label id="nameLabel2">amber</label>
+                                        <input data-val="true" data-val-length="The field 账号 must be a string with a minimum length of 4 and a maximum length of 12."
+                                            data-val-length-max="12" data-val-length-min="4" data-val-regex="账号只能由大小写字母和数字组合"
+                                            data-val-regex-pattern="^[A-Za-z0-9]+$" data-val-required="请输入账号！" id="Account" name="Account"
+                                            type="hidden" value="amber">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>真实姓名：</td>
+                                    <td><label id="realNameLabel2">黄一瑾</label>
+                                        <input data-val="true" data-val-length="The field 真实姓名 must be a string with a minimum length of 2 and a maximum length of 12."
+                                            data-val-length-max="12" data-val-length-min="2" data-val-required="请输入真实姓名！" id="RealName"
+                                            name="RealName" type="hidden" value="黄一瑾">
+                                        <input type="hidden" name="Tel" value=".">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>QQ：</td>
+                                    <td>
+                                        <input id="qq" name="qq" type="text" class="input" value="">
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <button id="updateInfoBtn" class="layui-btn layui-btn-primary">确定</button>
+                            <button class="layui-btn layui-btn-primary" onclick="user_info.back_Profile()">返回</button>
+                        </div>
+                    </div>
+
+
+                    <!--修改登录密码-->
+                    <div class="type layui-form" id="edit_login_pwd" style="display:none;">
+                        <h2 class="font20">修改登录密码</h2>
+                        <form id="updateUserPwdForm" action="">
+                        <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td width="160">原密码：</td>
+                                    <td>
+                                        <input id="oldPwd" required lay-verify="pwd" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>新密码：</td>
+                                    <td>
+                                        <input id="userPwd" required lay-verify="pwd" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>确认密码：</td>
+                                    <td>
+                                        <input id="userPwd2" required lay-verify="pwd" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <button id="updateUserPwd" lay-filter="updateUserPwd" lay-submit class="layui-btn layui-btn-primary" type="button">确定</button>
+                            <button class="layui-btn layui-btn-primary" onclick="user_info.back_login_pwd()">返回</button>
+                        </div>
+                        </form>
+                    </div>
+
+                    <!--修改取款密码-->
+                    <div class="type layui-form" id="edit_getMoney_pwd" style="display:none;">
+                          <form id="updateBankPwdForm" action="">
+                        <h2 class="font20">修改取款密码</h2>
+                        <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td width="160">原取款密码：</td>
+                                    <td>
+                                        <input id="oldBankPwd" required lay-verify="required" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>取款新密码：</td>
+                                    <td>
+                                        <input id="bankPwd" required lay-verify="required" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>确认取款密码：</td>
+                                    <td>
+                                        <input id="bankPwd2" required lay-verify="required" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <button id="updateBankPwd" lay-filter="updateBankPwd" lay-submit class="layui-btn layui-btn-primary" type="button">确定</button>
+                            <button class="layui-btn layui-btn-primary" onclick="user_info.back_getMoney_pwd()">返回</button>
+                        </div>
+                        </form>
+                    </div>
+
+
+                </div>
+            </div>
+            <div style=" clear:both"></div>
+        </div>
+    </div>
+
+
+</body>

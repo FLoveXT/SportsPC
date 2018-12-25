@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>余额状况</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="../../layui/css/layui.css" rel="stylesheet">
+    <link href="../../css/iconfont.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+
+    <script src="../../js/jquery-1.8.3.min.js"></script>
+    <script src="../../js/laydate/laydate.js"></script>
+    <script src="../../layui/layui.js"></script>
+    <script src="../../js/common.js"></script>
+
+    <style>
+        .layui-input,
+        .layui-select,
+        .layui-textarea {
+            border: 1px solid #cecece;
+        }
+
+        .input {
+            height: 20px;
+            text-indent: 6px;
+        }
+
+        .coloRed {
+            color: #ff6600;
+            margin-left: 4px;
+        }
+
+        .btn-reflesh {
+            color: #003399
+        }
+        .enableColor{
+        	color: #904d9a;
+        }
+        .enableColor2{
+        	color: #904d9a;
+        }
+        .layui-btn-sm {
+		    height: 30px;
+		    line-height: 30px;
+		    padding: 0 10px;
+		    font-size: 12px;
+		}
+		
+		.layui-table td, .layui-table th{
+			    padding: 6px 6px;
+		}
+        
+    </style>
+
+	<script type="text/javascript">
+		var ROWS = 10;
+		$(function(){
+			$("#updateBankPwd-btn").click(function(){
+				$("#updateBankPwsContent").show();
+				$("#mainContent").hide();
+			});
+			$("#goBack-btn").click(function(){
+				$("#updateBankPwsContent").hide();
+				$("#mainContent").show();
+			});
+			
+			getCapitalDetailList(1, ROWS);
+			getUserInfo(getStorageUser().id);
+			financialReportList(1, ROWS);
+			
+			$("#queryBtn").click(function(){
+				financialReportList(1, ROWS);
+			});
+		});
+		
+		function getCapitalDetailList(page, rows){
+			var reqData = {
+					memberPk: getStorageUser().id,
+					offset: page,
+					limit: rows,
+			};
+			$.ajax({
+				type : "GET",
+				url : BaseUrl + "capitalDetail/list",
+				data : reqData,
+				dataType : "json",
+				success : function(result) {
+					if (result.code == SUCCESS_CODE) {
+						var data =  result.result;
+						var totalSize = data.totalCount;
+						
+						var totalPage = parseInt((totalSize + (ROWS - 1))/ROWS);
+						$("#total").html(totalSize);
+						$("#page").html(page);
+						
+						$(".enableColor").off("click")
+						if(page > 1){
+							$("#firstPage").addClass("enableColor");
+							$("#upPage").addClass("enableColor");
+						} else {
+							$("#firstPage").removeClass("enableColor");
+							$("#upPage").removeClass("enableColor");
+						}
+						if(totalPage > 1 && totalPage != page){
+							$("#nextPage").addClass("enableColor");
+							$("#endPage").addClass("enableColor");
+						}else{
+							$("#nextPage").removeClass("enableColor");
+							$("#endPage").removeClass("enableColor");
+						}
+						
+						$(".enableColor").on("click", function(){
+							var id= $(this).attr("id");
+							if(id == "firstPage"){
+								getCapitalDetailList(1, ROWS);
+							} else if(id == "upPage"){
+								getCapitalDetailList(page - 1, ROWS);
+							} else if(id == "nextPage"){
+								getCapitalDetailList(page + 1, ROWS);
+							} else if(id == "endPage"){
+								getCapitalDetailList(totalPage, ROWS);
+							}
+						})
+						
+						var html = "";
+						if(data.result && data.result.length > 0){
+							$.each(data.result, function(i, capitalDetail){
+								html += '<tr>';
+								html += '<td>' + (i+1) + '</td>';
+								html += '<td>' + CAPITALDETAI_TYPE[capitalDetail.type] + '</td>';
+		                        html += '<td>变动前账户余额：' + formatterDouble(capitalDetail.balanceBefor);
+		                        html += '<br> 变动金额：' + formatterDouble(capitalDetail.money);
+	                        	html += '<br> 变动后账户余额：' + formatterDouble(capitalDetail.balanceAfter);
+	                        	html += '</td>';
+		                        html += '<td style="width: 140px;">' + (!capitalDetail.createTime ? "" : capitalDetail.createTime.replace(/-/g, "/")) + '</td>';
+		                        html += '<td>' + (!capitalDetail.remark ? "" : capitalDetail.remark) + '</td>';
+		                        html += '</tr> ';
+							})
+						} else {
+							html += '<td colspan="5">暂时没有数据！</td>'
+						}
+						$("#capitalDetailTable tbody").html(html);
+					} else {
+						layer.alert(result.msg, {
+							title : '错误信息'
+						});
+					}
+				}
+			});
+		}
+		
+		layui.use('laydate', function () {
+			var laydate = layui.laydate;
+				laydate.render({
+			    elem: '#startTime' //指定元素
+			  });
+			var endTime = layui.laydate;
+				laydate.render({
+			    elem: '#endTime' //指定元素
+			  });
+		});
+		layui.use('form', function () {
+        	var form = layui.form; 
+          	//自定义验证规则  
+          	form.verify({  
+        	  	pwd: function(value){  
+        		  	if(value.length < 6 || value.length >12){  
+        			  	return '须为6-12位英文或数字且符合0~9或a~z字元';  
+        		  	} 
+        		  	if(!new RegExp("^[a-zA-Z0-9]+$").test(value)){
+        			  	return '须为6-12位英文或数字且符合0~9或a~z字元';
+        		  	}
+        	  	} 
+         	 });
+          	
+	       //更新取款密码
+	       form.on('submit(updateBankPwd)', function(data){  
+    	   		var id = getStorageUser().id;
+				var oldPwd = $("#oldBankPwd").val();
+				var bankPwd = $("#bankPwd").val();
+				var bankPwd2 = $("#bankPwd2").val();
+				if(bankPwd != bankPwd2){
+					layer.alert("确认密码与新密码不一致", {
+						title : '错误信息'
+					});
+					return false;
+				}
+				
+				var reqData = {
+						oldPwd : oldPwd,
+						bankPwd : bankPwd,
+						trueBankPwd : bankPwd2,
+				};
+				$.ajax({
+					type : "POST",
+					url : BaseUrl + "user/updateBankPwd",
+					data : reqData,
+					dataType : "json",
+					success : function(result) {
+						if (result.code == SUCCESS_CODE) {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+							$("#oldBankPwd").val("");
+							$("#bankPwd").val("");
+							$("#bankPwd2").val("");
+							
+							$("#updateBankPwsContent").hide();
+							$("#mainContent").show();
+						} else {
+							layer.alert(result.msg, {
+								title : '错误信息'
+							});
+						}
+					}
+				});  
+	       }); 
+          }); 
+		
+		
+		function getUserInfo(id){
+			if(!id){
+				id = "";
+			}
+        	$.ajax({
+				type : "GET",
+				url : BaseUrl + "user/getUserInfo",
+				dataType : "json",
+				success : function(result) {
+					if (result.code == SUCCESS_CODE) {
+						var user = result.result.user;
+						$("#balance").html(formatterDouble(user.balance));
+						$("#rechargeCount").html(formatterDouble(user.rechargeCount));
+						$("#drawMoneyCount").html(formatterDouble(user.drawMoneyCount));
+						$("#rechargeTimes").html(user.rechargeTimes);
+						$("#drawMoneyTimes").html(user.drawMoneyTimes);
+					} else {
+						layer.alert(result.msg, {
+							title : '错误信息'
+						});
+					}
+				}
+			});
+        }
+		
+		function financialReportList(page, rows){
+			var reqData = {
+					startTime: $("#startTime").val(),
+					endTime: $("#endTime").val(),
+					offset: page,
+					limit: rows,
+			};
+			$.ajax({
+				type : "GET",
+				url : BaseUrl + "capitalDetail/financialReportList",
+				data : reqData,
+				dataType : "json",
+				success : function(result) {
+					if (result.code == SUCCESS_CODE) {
+						var data =  result.result.data;
+						var totalSize = data.totalCount;
+						
+						var totalPage = parseInt((totalSize + (ROWS - 1))/ROWS);
+						$("#total2").html(totalSize);
+						$("#page2").html(page);
+						
+						$(".enableColor2").off("click")
+						if(page > 1){
+							$("#firstPage2").addClass("enableColor2");
+							$("#upPage2").addClass("enableColor2");
+						} else {
+							$("#firstPage2").removeClass("enableColor2");
+							$("#upPage2").removeClass("enableColor2");
+						}
+						if(totalPage > 1 && totalPage != page){
+							$("#nextPage2").addClass("enableColor2");
+							$("#endPage2").addClass("enableColor2");
+						}else{
+							$("#nextPage2").removeClass("enableColor2");
+							$("#endPage2").removeClass("enableColor2");
+						}
+						
+						$(".enableColor2").on("click", function(){
+							var id= $(this).attr("id");
+							if(id == "firstPage"){
+								financialReportList(1, ROWS);
+							} else if(id == "upPage"){
+								financialReportList(page - 1, ROWS);
+							} else if(id == "nextPage"){
+								financialReportList(page + 1, ROWS);
+							} else if(id == "endPage"){
+								financialReportList(totalPage, ROWS);
+							}
+						})
+						
+						var html = "";
+						if(data.result && data.result.length > 0){
+							var tbetCount = 0;
+							var tresultCount = 0;
+							var teffectiveFlow = 0;
+							var twin = 0;
+							$.each(data.result, function(i, capitalDetail){
+								var betCount = capitalDetail.betCount;
+								if(!betCount)
+									betCount = 0;
+								var resultCount = capitalDetail.resultCount;
+								if(!resultCount)
+									resultCount = 0;
+								
+								html += '<tr>';
+								html += '<td>' + capitalDetail.date + '</td>';
+		                        html += '<td>' + formatterDouble(betCount) + '</td>';
+		                        html += '<td>' + formatterDouble(resultCount) + '</td>';
+		                        html += '<td>' + formatterDouble(capitalDetail.effectiveFlow) + '</td>';
+		                        html += '<td>' + formatterDouble((resultCount - betCount)) + '</td>';
+		                        html += '</tr> ';
+		                        
+		                        tbetCount += parseFloat(formatterDouble(betCount));
+		                        tresultCount += parseFloat(formatterDouble(resultCount));
+		                        teffectiveFlow += parseFloat(formatterDouble(capitalDetail.effectiveFlow));
+		                        twin += parseFloat(formatterDouble((resultCount - betCount)));
+							})
+							html += '<tr>';
+							html += '<td style="background-color:#ccc;">总计</td>';
+	                        html += '<td style="background-color:#ccc;">' + tbetCount + '</td>';
+	                        html += '<td style="background-color:#ccc;">' + tresultCount + '</td>';
+	                        html += '<td style="background-color:#ccc;">' + teffectiveFlow + '</td>';
+	                        html += '<td style="background-color:#ccc;">' + twin + '</td>';
+	                        html += '</tr> ';
+						} else {
+							html += '<td colspan="5">暂时没有数据！</td>'
+						}
+						$("#capitalReportTable tbody").html(html);
+					} else {
+						layer.alert(result.msg, {
+							title : '错误信息'
+						});
+					}
+				}
+			});
+		}
+	</script>
+
+
+
+</head>
+
+<body style="background:#1f2934">
+
+    <div class="top_wrap">
+        <div class="container">
+            <div class="inside">
+                <span class="user_txt">会员中心</span>
+                <div class="pull-right">
+                    <p class="time">
+                        <i class="iconfont icon-shijian"></i>美东时间：2018-03-28 03:21:22</p>
+                        <a href="recharge.html" class="save_money pull-right">
+                                <i class="iconfont icon-qian"></i> 线上存款</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top:10px;">
+
+        <div class="box">
+            <div class="left_part">
+                <div class="wrap">
+                    <h1>会员专区</h1>
+                    <ul class="menu">
+                        <li id="onlineRecharge">
+                            <a href="recharge.html">在线充值</a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">额度转换</a>
+                        </li> -->
+                        <li id="tixianApply">
+                            <a href="tixain_aply.html">提现申请</a>
+                        </li>
+                        <li  class="on">
+                            <a href="account_info.html">帐目信息</a>
+                        </li>
+                        <li>
+                            <a href="zhudan.html">注单查询</a>
+                        </li>
+                        <li id="loginOut">退出</li>
+                    </ul>
+                </div>
+                <div class="wrap">
+                    <h1>公告信息</h1>
+                    <ul class="menu">
+                        <li>
+                            <a href="user_info.html">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="spot_news.html">最新消息</a>
+                        </li>
+                        <li>
+                            <a href="play_board.html">游戏公告</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_part">
+
+                <script>
+                    $(document).ready(function () {
+                        $("ul.pay_typ li").click(function () {
+
+                            var index = $("ul.pay_typ li").index(this);
+                            $(".type_content").hide();
+                            $("ul.pay_typ li").removeClass("on");
+                            $(this).addClass("on");
+                            $(".type_content").eq(index).show();
+
+
+                        })
+                    }) 
+                </script>
+
+                <div id="mainContent" class="inside">
+                    <ul class="pay_typ">
+                        <li class="on">基本信息</li>
+                        <li>资金明细</li>
+                        <li>资金报表</li>
+                        <!-- <li>入款记录</li>
+                        <li>出款记录</li>
+                        <li>转换记录</li>
+                        <li>其它</li> -->
+                    </ul>
+                    <!--基本信息-->
+                    <div class="type_content" style="display:block;">
+                        <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <!-- <tr>
+
+                                    <td class="tdtit">DG余额：</td>
+                                    <td>
+                                        <span id="CTBalance">0.00</span> &nbsp;
+                                        <span id="DGSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('DG')">刷新</a>
+                                        </span>
+                                    </td>
+                                    <td class="tdtit">AG余额：</td>
+                                    <td>
+                                        <span id="AGBalance">0.00</span> &nbsp;
+                                        <span id="AGSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('AG')">刷新</a>
+                                        </span>
+                                    </td>
+                                    <td class="tdtit">BBIN余额：</td>
+                                    <td>
+                                        <span id="BBINBalance">0.00</span> &nbsp;
+                                        <span id="BBINSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('BBIN')">刷新</a>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">DS余额：</td>
+                                    <td>
+                                        <span id="DSBalance">0.00</span> &nbsp;
+                                        <span id="DSSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('DS')">刷新</a>
+                                        </span>
+                                    </td>
+                                    <td class="tdtit">GD余额：</td>
+                                    <td>
+                                        <span id="GDBalance">0.00</span> &nbsp;
+                                        <span id="GDSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('GD')">刷新</a>
+                                        </span>
+                                    </td>
+                                    <td class="tdtit">MG余额：</td>
+                                    <td>
+                                        <span id="MGBalance">0.00</span> &nbsp;
+                                        <span id="MGSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('MG')">刷新</a>
+                                        </span>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">ABA余额：</td>
+                                    <td>
+                                        <span id="ABABalance">0.00</span> &nbsp;
+                                        <span id="ABASpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('ABA')">刷新</a>
+                                        </span>
+                                    </td>
+                                    <td class="tdtit">LBS余额：</td>
+                                    <td>
+                                        <span id="LBSBalance">0.00</span> &nbsp;
+                                        <span id="LBSSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('LBS')">刷新</a>
+                                        </span>
+                                    </td>
+                                    <td class="tdtit">DSFFC余额：</td>
+                                    <td>
+                                        <span id="DSFFCBalance">0.00</span> &nbsp;
+                                        <span id="DSFFCSpan">
+                                            <a class="btn-reflesh" href="javascript:;" onclick="GetBalance('DSFFC')">刷新</a>
+                                        </span>
+                                    </td>
+
+                                </tr> -->
+                                <tr>
+                                    <td class="tdtit">平台余额：</td>
+                                    <td id="balance"></td>
+                                    <td class="tdtit">累计存款次数：</td>
+                                    <td id="rechargeTimes">0</td>
+                                    <td class="tdtit">累计提款次数：</td>
+                                    <td id="drawMoneyTimes">0</td>
+                                </tr>
+                                <tr>
+
+                                    <td class="tdtit">累计存款总额：</td>
+                                    <td id="rechargeCount">0.00</td>
+                                    <td class="tdtit">累计提款总额：</td>
+                                    <td id="drawMoneyCount">0.00</td>
+                                    <td class="tdtit">取款密码：</td>
+                                    <td id="bankPassword">
+                                        <input type="password" class="input" value="请输入取款密码">
+                                        <a id="updateBankPwd-btn" class="coloRed" href="#">修改</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tdtit">备注：</td>
+                                    <td colspan="5">注册：--&gt;m.sandsmac.com</td>
+
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--资金明细-->
+                    <div class="type_content" style="display:none;">
+
+                        <table id="capitalDetailTable" class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <thead>
+                            	<tr>
+                                    <td class="tablename"></td>
+                                    <td class="tablename">内容</td>
+                                    <td class="tablename">金额变化</td>
+                                    <td class="tablename">时间</td>
+                                    <td class="tablename">备注</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5">
+                                    	暂时没有数据！
+                                    </td>
+                                </tr>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                 <tr>
+	                                <td>共
+	                                    <span id="total">0</span>条记录，当前第
+	                                    <strong id="page">1</strong>页</td>
+	                                <td style="text-align:right;">
+	                                    <a id="firstPage">首页</a>&nbsp;&nbsp;
+	                                    <a id="upPage">上一页</a>&nbsp;&nbsp;
+	                                    <a id="nextPage">下一页</a>&nbsp;&nbsp;
+	                                    <a id="endPage">尾页</a>
+	                                </td>
+	                            </tr>
+
+                            </table>
+                        </div>
+                    </div>
+
+                    <!--资金报表-->
+                    <div class="type_content" style="display:none;">
+						<div style="margin-top: 20px;">
+							开始时间：<input id="startTime" type="text"  class="layui-input" style="width: 160px;display: inline-block; height: 28px;" readonly="readonly">
+							结束时间：<input id="endTime" type="text"  class="layui-input" style="width: 160px;display: inline-block; height: 28px;" readonly="readonly">
+							
+							<a id="queryBtn" href="#" class="layui-btn layui-btn-sm"> 查询 </a>
+							
+						</div>
+                        <table id="capitalReportTable" class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <thead>
+                            	<tr>
+                                    <td class="tablename">时间</td>
+                                    <td class="tablename">投注金额</td>
+                                    <td class="tablename">返奖金额</td>
+                                    <td class="tablename">有效流水</td>
+                                    <td class="tablename">盈亏</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="5">
+                                    	暂时没有数据！
+                                    </td>
+                                </tr>
+                             </tbody>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                 <tr>
+	                                <td>共
+	                                    <span id="total2">0</span>条记录，当前第
+	                                    <strong id="page2">1</strong>页</td>
+	                                <td style="text-align:right;">
+	                                    <a id="firstPage2">首页</a>&nbsp;&nbsp;
+	                                    <a id="upPage2">上一页</a>&nbsp;&nbsp;
+	                                    <a id="nextPage2">下一页</a>&nbsp;&nbsp;
+	                                    <a id="endPage2">尾页</a>
+	                                </td>
+	                            </tr>
+
+                            </table>
+                        </div>
+                    </div>
+
+
+                    <!--入款记录-->
+                    <div class="type_content" style="display:none">
+
+                        <div style="padding-top:14px;">
+
+                            <form action="" method="get">
+                                <span class="stit">日期：</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>--</span>
+                                <input type="text" class="input" name=""  style="width:80px">
+                                <span class="stit">方式：</span>
+                                <select id="DepositWay" name="DepositWay" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="0">后台存入</option>
+                                    <option value="1">会员存入</option>
+                                </select>
+                                <input type="hidden" name="m" value="">
+                                <button type="submit" class="btn-tmp">搜索</button>
+                            </form>
+
+                        </div>
+
+                        <table class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td class="tablename">订单号</td>
+
+                                    <td class="tablename">类型</td>
+                                    <td class="tablename">入款操作</td>
+                                    <td class="tablename">入款银行</td>
+                                    <td class="tablename">入款状态</td>
+                                    <td class="tablename">入款时间</td>
+                                    <td class="tablename">订单明细</td>
+
+                                </tr>
+                                <tr >
+                                    <td>
+                                        <span>201803201624226783</span>
+                                    </td>
+
+                                    <td class="coloRed">
+                                        <span>入款优惠</span>
+                                    </td>
+                                    <td>入款方式：
+                                        <span>后台存入</span>
+                                        <br> 入款金额：
+                                        <span>1.00</span>
+                                        <br> 优惠金额：
+                                        <span>1.00</span>
+
+                                    </td>
+
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/20 16:23:59">
+                                        <span>2018/3/20</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>201803201624225535--</span>
+                                    </td>
+                                </tr>
+                                <tr id="secTr">
+                                    <td>
+                                        <span>201803201624225535</span>
+                                    </td>
+
+                                    <td class="coloRed">
+                                        <span>入款</span>
+                                    </td>
+                                    <td>入款方式：
+                                        <span>后台存入</span>
+                                        <br> 入款金额：
+                                        <span>100.00</span>
+                                        <br> 优惠金额：
+                                        <span>1.00</span>
+
+                                    </td>
+
+                                    <td>
+                                        <span></span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/20 16:23:59">
+                                        <span>2018/3/20</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight:bold;">
+                                    <td>合计</td>
+                                    <td colspan="6">
+
+                                        入款合计 100.00 &nbsp;&nbsp;&nbsp;优惠合计：1.00
+
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+
+                    </div>
+
+
+                    <!--出款记录-->
+                    <div class="type_content" style="display:none">
+
+                        <div style="padding-top:14px;">
+
+                            <form action="/MemberCenter/Withdrawal" method="get">
+                                <span>日期：</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>--</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>状态：</span>
+                                <select id="WithdrawalState" name="WithdrawalState" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="1">已出</option>
+                                    <option value="2">未出</option>
+                                    <option value="3">拒绝</option>
+                                </select>
+
+                                <button type="submit" class="btn-tmp">搜索</button>
+                            </form>
+                            <div class="clr"></div>
+                        </div>
+                        <table class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+
+                                    <td class="tablename" width="130px">操作金额</td>
+                                    <td class="tablename">状态</td>
+                                    <td class="tablename">类型</td>
+                                    <td class="tablename">银行名称</td>
+                                    <td class="tablename">卡号</td>
+                                    <td class="tablename">姓名</td>
+                                    <td class="tablename">申请时间</td>
+                                    <td class="tablename">备注</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8" style="text-align:center;">暂时没有数据！</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight:bold;">
+                                    <td>合计</td>
+                                    <td colspan="7">手续费合计：0 &nbsp; &nbsp; &nbsp; 优惠合计：0&nbsp; &nbsp; &nbsp; 出款合计：0
+                                    </td>
+
+
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+
+
+
+                    <!--转换记录-->
+                    <div class="type_content" style="display:none">
+                        <div style="padding-top:14px;">
+                            <form action="" method="get">
+                                <span>日期：</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>--</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>转出：</span>
+                                <select id="FromPlat" name="FromPlat" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="plat">平台</option>
+                                    <option value="AG">AG</option>
+                                    <option value="BBIN">BBIN</option>
+                                    <option value="DS">DS</option>
+                                    <option value="GD">GD</option>
+                                    <option value="MG">MG</option>
+                                    <option value="CT">CT</option>
+                                    <option value="LBS">LBS</option>
+                                    <option value="DSFFC">分分彩</option>
+                                    <option value="DG">DG</option>
+                                </select>
+                                <span>转入：</span>
+                                <select id="ToPlat" name="ToPlat" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="plat">平台</option>
+                                    <option value="AG">AG</option>
+                                    <option value="BBIN">BBIN</option>
+                                    <option value="DS">DS</option>
+                                    <option value="GD">GD</option>
+                                    <option value="MG">MG</option>
+                                    <option value="CT">CT</option>
+                                    <option value="LBS">LBS</option>
+                                    <option value="DSFFC">分分彩</option>
+                                    <option value="DG">DG</option>
+                                </select>
+
+                                <button type="submit" class="btn-tmp">搜索</button>
+                                <button type="submit" class="btn-tmp">转账</button>
+
+                            </form>
+                        </div>
+
+                        <table class="layui-table" width="100%" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+
+                                    <td class="tablename" width="130px">操作金额</td>
+                                    <td class="tablename">状态</td>
+                                    <td class="tablename">类型</td>
+                                    <td class="tablename">银行名称</td>
+                                    <td class="tablename">卡号</td>
+                                    <td class="tablename">姓名</td>
+                                    <td class="tablename">申请时间</td>
+                                    <td class="tablename">备注</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="8" style="text-align:center;">暂时没有数据！</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight:bold;">
+                                    <td>合计</td>
+                                    <td colspan="7">手续费合计：0 &nbsp; &nbsp; &nbsp; 优惠合计：0&nbsp; &nbsp; &nbsp; 出款合计：0
+                                    </td>
+
+
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+
+                    <!--其他-->
+                    <div class="type_content" style="display:none">
+                        <div style="padding-top:14px;">
+                            <form action="/MemberCenter/Deposit/Index_Other" method="get">
+                                <span>日期：</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>--</span>
+                                <input type="text" name="" class="input"  style="width:80px">
+                                <span>类型：</span>
+                                <select id="DepositType" name="DepositType" style="height:24px;">
+                                    <option value="">==选择==</option>
+                                    <option value="2">退佣</option>
+                                    <option value="3">返水</option>
+                                    <option value="4">彩金</option>
+                                    <option value="5">入款优惠</option>
+                                    <option value="6">金额返还</option>
+                                    <option value="7">下注扣款</option>
+                                </select>
+                                <button type="submit" class="btn-tmp" value="">查询</button>
+                                <button type="submit" class="btn-tmp" value="">立即充值</button>
+                            </form>
+                        </div>
+
+                        <table class="layui-table" border="1" width="100%" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td class="tablename">订单号</td>
+                                    <td class="tablename">入款类型</td>
+                                    <td>入款操作</td>
+                                    <td class="tablename">入款银行</td>
+                                    <td class="tablename">入款状态</td>
+                                    <td class="tablename">入款时间</td>
+                                    <td class="tablename">备注</td>
+                                </tr>
+                                <tr >
+                                    <td>
+                                        <span>3874186</span>
+                                    </td>
+                                    <td>
+                                        <span>下注扣款</span>
+                                    </td>
+                                    <td>
+                                        入款方式：
+                                        <span>下注扣款</span>
+                                        <br> 入款金额:
+                                        <span class="coloRed">-10.00</span>
+                                        <br> 优惠金额：
+                                        <span>0.00</span>
+                                    </td>
+                                    <td>
+                                        <span>平台</span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/28 18:29:12">
+                                        <span>2018/3/28</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>足球下注扣款，下注ID：3874186</span>
+                                    </td>
+                                </tr>
+                                <tr id="secTr">
+                                    <td>
+                                        <span>20180328180015643</span>
+                                    </td>
+                                    <td>
+                                        <span>返水</span>
+                                    </td>
+                                    <td>
+                                        入款方式：
+                                        <span>系统结算</span>
+                                        <br> 入款金额:
+                                        <span class="coloRed">0.25</span>
+                                        <br> 优惠金额：
+                                        <span>0.00</span>
+                                    </td>
+                                    <td>
+                                        <span>平台</span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/28 17:59:28">
+                                        <span>2018/3/28</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>返水,ticketid:足球，返水时间范围：2018/3/18 0:00:00----2018/3/27 23:59:59,ID:</span>
+                                    </td>
+                                </tr>
+                                <tr >
+                                    <td>
+                                        <span>3864408</span>
+                                    </td>
+                                    <td>
+                                        <span>彩金</span>
+                                    </td>
+                                    <td>
+                                        入款方式：
+                                        <span>系统结算</span>
+                                        <br> 入款金额:
+                                        <span class="coloRed">20.40</span>
+                                        <br> 优惠金额：
+                                        <span>0.00</span>
+                                    </td>
+                                    <td>
+                                        <span>平台</span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/28 6:30:42">
+                                        <span>2018/3/28</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>中，体育下注ID：3864408</span>
+                                    </td>
+                                </tr>
+                                <tr id="secTr">
+                                    <td>
+                                        <span>3864408</span>
+                                    </td>
+                                    <td>
+                                        <span>下注扣款</span>
+                                    </td>
+                                    <td>
+                                        入款方式：
+                                        <span>下注扣款</span>
+                                        <br> 入款金额:
+                                        <span class="coloRed">-10.00</span>
+                                        <br> 优惠金额：
+                                        <span>0.00</span>
+                                    </td>
+                                    <td>
+                                        <span>平台</span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/28 2:45:09">
+                                        <span>2018/3/28</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>足球下注扣款，下注ID：3864408</span>
+                                    </td>
+                                </tr>
+
+                                <tr >
+                                    <td>
+                                        <span>3803772</span>
+                                    </td>
+                                    <td>
+                                        <span>彩金</span>
+                                    </td>
+                                    <td>
+                                        入款方式：
+                                        <span>系统结算</span>
+                                        <br> 入款金额:
+                                        <span class="coloRed">20.80</span>
+                                        <br> 优惠金额：
+                                        <span>0.00</span>
+                                    </td>
+                                    <td>
+                                        <span>平台</span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/23 18:06:29">
+                                        <span>2018/3/23</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>中，体育下注ID：3803772</span>
+                                    </td>
+                                </tr>
+                                <tr id="secTr">
+                                    <td>
+                                        <span>3803771</span>
+                                    </td>
+                                    <td>
+                                        <span>彩金</span>
+                                    </td>
+                                    <td>
+                                        入款方式：
+                                        <span>系统结算</span>
+                                        <br> 入款金额:
+                                        <span class="coloRed">12.60</span>
+                                        <br> 优惠金额：
+                                        <span>0.00</span>
+                                    </td>
+                                    <td>
+                                        <span>平台</span>
+                                    </td>
+                                    <td>
+                                        <span class="coloRed">成功</span>
+                                    </td>
+                                    <td title="2018/3/23 18:06:29">
+                                        <span>2018/3/23</span>
+                                    </td>
+                                    <td style="max-width:200px;">
+                                        <span>中，体育下注ID：3803771</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight:bold;">
+                                    <td>合计</td>
+                                    <td colspan="6">
+                                        入款合计：37.45 &nbsp;&nbsp;&nbsp;优惠合计：0.00
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+
+                        <div class="page">
+                            <table width="100%">
+                                <tr>
+                                    <td>共
+                                        <span>0</span>条记录，当前第
+                                        <strong>1</strong>页</td>
+                                    <td style="text-align:right;">
+                                        <a disabled="disabled">首页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">上一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">下一页</a>&nbsp;&nbsp;
+                                        <a disabled="disabled">尾页</a>
+                                    </td>
+                                </tr>
+
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="updateBankPwsContent" class="inside  layui-form" style="display: none;">
+                     <form id="updateBankPwdForm" action="">
+                        <h2 class="font20">修改取款密码</h2>
+                        <table class="layui-table" border="1" style="margin-bottom: 8px;">
+                            <tbody>
+                                <tr>
+                                    <td width="160">原取款密码：</td>
+                                    <td>
+                                        <input id="oldBankPwd" required lay-verify="required" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>取款新密码：</td>
+                                    <td>
+                                        <input id="bankPwd" required lay-verify="required" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>确认取款密码：</td>
+                                    <td>
+                                        <input id="bankPwd2" required lay-verify="required" class="input" maxlength="20" type="password" value="">
+                                        <b class="coloRed">*</b>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                            <button id="updateBankPwd" lay-filter="updateBankPwd" lay-submit class="layui-btn layui-btn-primary" type="button">确定</button>
+                            <button id="goBack-btn" class="layui-btn layui-btn-primary" >返回</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div style=" clear:both"></div>
+        </div>
+    </div>
+
+
+</body>

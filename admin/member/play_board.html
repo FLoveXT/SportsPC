@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>游戏公告</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="../../layui/css/layui.css" rel="stylesheet">
+    <link href="../../css/iconfont.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+
+    <script src="../../js/jquery-1.8.3.min.js"></script>
+     <script src="../../layui/layui.js"></script>
+    <script src="../../js/common.js"></script>
+    
+
+    <style>
+        .layui-input,
+        .layui-select,
+        .layui-textarea {
+            border: 1px solid #cecece;
+        }
+
+        .input {
+            height: 28px;
+        }
+
+        .coloRed {
+            color: #ff6600;
+            margin-left: 4px;
+        }
+        
+        .enableColor{
+        	color: #904d9a;
+        }
+    </style>
+
+	<script type="text/javascript">
+		var ROWS = 10;
+		$(function(){
+			getList(1, ROWS);
+		})
+		function getList(page, rows){
+			$.ajax({
+				type : "GET",
+				url : BaseUrl + "message/getGameNoticeList/" + page + "/" + rows,
+				dataType : "json",
+				success : function(result) {
+					if (result.code == SUCCESS_CODE) {
+						var data =  result.result;
+						var totalSize = data.totalSize;
+						
+						var totalPage = parseInt((totalSize + (ROWS - 1))/ROWS);
+						$("#total").html(totalSize);
+						$("#page").html(page);
+						
+						$(".enableColor").off("click")
+						if(page > 1){
+							$("#firstPage").addClass("enableColor");
+							$("#upPage").addClass("enableColor");
+						} else {
+							$("#firstPage").removeClass("enableColor");
+							$("#upPage").removeClass("enableColor");
+						}
+						if(totalPage > 1 && totalPage != page){
+							$("#nextPage").addClass("enableColor");
+							$("#endPage").addClass("enableColor");
+						}else{
+							$("#nextPage").removeClass("enableColor");
+							$("#endPage").removeClass("enableColor");
+						}
+						
+						$(".enableColor").on("click", function(){
+							var id= $(this).attr("id");
+							if(id == "firstPage"){
+								getList(1, ROWS);
+							} else if(id == "upPage"){
+								getList(page - 1, ROWS);
+							} else if(id == "nextPage"){
+								getList(page + 1, ROWS);
+							} else if(id == "endPage"){
+								getList(totalPage, ROWS);
+							}
+						})
+						
+						
+						var gameNoticeVoList = data.gameNoticeVoList;
+						var html = "";
+						if(gameNoticeVoList && gameNoticeVoList.length > 0){
+							$.each(gameNoticeVoList, function(i, gameNotice){
+								html += '<tr>';
+								html += '<td>' + gameNotice.createName + '</td>';
+								html += '<td>' + gameNotice.createDate.replace(/-/g, "/") + '</td>';
+								html += '<td style=" width:80%;">' + gameNotice.content + '</td>';
+								html += '</tr>';
+							})
+						} else {
+							html += '<tr>';
+							html += '<td colspan="3">暂时没有数据！</td>';
+							html += '</tr>';
+						}
+						
+						$("#gameNoticeTable tbody").html(html)
+					} else {
+						layer.alert(result.msg, {
+							title : '错误信息'
+						});
+					}
+				}
+			});
+		}
+	
+	</script>
+
+
+
+</head>
+
+<body style="background:#1f2934">
+
+    <div class="top_wrap">
+        <div class="container">
+            <div class="inside">
+                <span class="user_txt">会员中心</span>
+                <div class="pull-right">
+                    <p class="time">
+                        <i class="iconfont icon-shijian"></i>美东时间：2018-03-28 03:21:22</p>
+                    <a href="recharge.html" class="save_money pull-right">
+                        <i class="iconfont icon-qian"></i> 线上存款</a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-top:10px;">
+
+        <div class="box">
+            <div class="left_part">
+                <div class="wrap">
+                    <h1>会员专区</h1>
+                    <ul class="menu">
+                        <li id="onlineRecharge">
+                            <a href="recharge.html">在线充值</a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">额度转换</a>
+                        </li> -->
+                        <li id="tixianApply">
+                            <a href="tixain_aply.html">提现申请</a>
+                        </li>
+                        <li>
+                            <a href="account_info.html">帐目信息</a>
+                        </li>
+                        <li>
+                            <a href="zhudan.html">注单查询</a>
+                        </li>
+                        <li id="loginOut">退出</li>
+                    </ul>
+                </div>
+                <div class="wrap">
+                    <h1>公告信息</h1>
+                    <ul class="menu">
+                        <li>
+                            <a href="user_info.html">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="spot_news.html">最新消息</a>
+                        </li>
+                        <li  class="on">
+                            <a href="play_board.html">游戏公告</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_part">
+                <h1>游戏公告</h1>
+                <div class="inside">
+
+
+                    <!--最新消息-->
+                    <div class="type" id="accounts">
+                        <table id="gameNoticeTable" class="layui-table" border="1" style="margin-bottom: 8px;">
+                            <thead>
+                                <tr>
+                                    <td width="100">添加人</td>
+                                    <td>添加时间</td>
+                                    <td>内容</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr id="">
+                                    <td colspan="3">暂时没有数据！</td>
+                                </tr>
+                                <!-- <tr id="">
+                                    <td>体育</td>
+                                    <td>2018/3/21 23:09:26</td>
+                                    <td style=" width:80%;">足球赛事:03月21日 西班牙丙组联赛 (门萨杰罗 VS 苏雅萨) 因赛事延迟至10:18开赛, 所有提前投注在滚球的注单本公司一律视为有效.</td>
+                                </tr> -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="page">
+                        <table width="100%">
+                            <tr>
+                                <td>共
+                                    <span id="total">0</span>条记录，当前第
+                                    <strong id="page">1</strong>页</td>
+                                <td style="text-align:right;">
+                                    <a id="firstPage">首页</a>&nbsp;&nbsp;
+                                    <a id="upPage">上一页</a>&nbsp;&nbsp;
+                                    <a id="nextPage">下一页</a>&nbsp;&nbsp;
+                                    <a id="endPage">尾页</a>
+                                </td>
+                            </tr>
+
+                        </table>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+            <div style=" clear:both"></div>
+        </div>
+    </div>
+
+
+</body>

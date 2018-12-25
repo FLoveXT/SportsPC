@@ -1,0 +1,353 @@
+@charset "UTF-8";
+/*order_today.html*/
+.ord_main{ width:215px; height:100%; background-color:#32271e;overflow-x:hidden; overflow-y:auto;}
+.ord_DIV{ position:relative;height:100%;background-color:#503f32;}
+/* Microsoft Edge Browser 12+ (All) - @supports method */
+@supports (-ms-accelerator:true) {.ord_DIV{ width:205px}}
+.ord_mainHight{height:100%}
+
+.ord_memu, .ord_memu2{ height:40px; line-height:40px; padding:0 0 0 8px; background-color:#513f33}
+.ord_memu2{padding:0 0 0 0px;background: #4f3824;}
+.ord_memuBTN, .ord_memuBTN_on, .ord_memuBTN_off { position:relative;display:inline-block;font-size:13px;color:#c3b294; text-align:center;  padding:0px 10px;}
+.ord_memuBTN_on, .ord_memuBTN:hover{ color:#ffd796;}
+.ord_memu2 .ord_memuBTN, .ord_memu2 .ord_memuBTN_on, .ord_memu2 .ord_memuBTN_off{ padding:0px 10px;}
+.ord_msg{ position:absolute; display:block;padding: 0px 5px;height:18px; line-height:18px;border-radius: 99em; color:#fff; font-size:11px; text-align:center; background-color:#ff4646;top:4px; right:-6px;cursor:default;-webkit-transform: scale(0.91);-o-transform: scale(1);}
+.ord_memu2  em{color: #7d6046;}
+.ord_DIV h1{ background-color:#503f32; line-height:40px; font-size:15px; padding-left:10px; color:#fff1d6; font-weight:bold;}
+
+.ord_sportMenu_InPlayG, .ord_sportMenu_WorldCup, .ord_sportMenu_highG{ background-color:#fef6e8; }
+.ord_sportMenu_InPlay, .ord_sportMenu_Today, .ord_sportMenu_WorldCup{padding:0 0 12px}
+.ord_sportMenu_InPlay div{ font-size:13px; color:#45403b; margin:0 5px 0 10px; padding:5px 0;margin-top: 5px; border-bottom: 1px solid #cecbb5;}
+.ord_sportMenu_InPlay div span, .ord_sportMenu_Today div span, .ord_sportMenu_WorldCup div span{ float:left; line-height:15px;}
+.ord_sportName{width:105px; text-align:left;}
+.ord_sportDigit{ width:52px; text-align:right;}
+
+.ord_sportMenu_Today{display: none;}
+.ord_sportMenu_TodayG{background-color:#503f32;}
+.ord_sportMenu_Today ul{ padding:10px 10px 7px; margin-top:10px; background-color:#fef6e8;display: none;}
+.ord_sportMenu_Today ul li{ font-size:13px;color:#45403b; padding: 5px 0;border-bottom: 1px solid #cecbb5;}
+.ord_sportMenu_Today ul li:hover, .ord_sportMenu_Today ul li.On{color:#e76121;}
+
+.ord_noInPlay, .ord_noInSports{line-height:15px; background-color:#fef6e8; font-size:13px; color:#8d8379; padding:8px 10px 7px; }
+.ord_noInSports{ background-color:#503f32; color:#bbab9b}
+
+
+.ord_sportMenu_WorldCupG h1{ padding:11px 10px 9px; line-height:20px;color:#ffbe55; word-break: break-word;}
+.ord_sportMenu_WorldCup div{font-size:13px; color:#45403b; padding:13px 12px 0 10px;}
+.ord_sportMenu_WorldCup div:hover,.ord_sportMenu_WorldCup div.On{color:#e76121;}
+.ord_sportDigitWC{ width:73px; text-align:right}
+
+.ord_sportMenu_high{ padding-top:0px; padding-bottom:11px}
+.ord_sportMenu_high2{ padding-top:0px;}
+.ord_sportMenu_high div,.ord_sportMenu_high2 div{ display:table;font-size:13px; color:#45403b; padding:0 5px 0 10px; margin-top:10px;}
+.ord_sportMenu_high div span, .ord_sportMenu_high2 div span{ display:table-cell;line-height:20px; vertical-align:middle}
+.ord_sportMenu_high .ord_sportName, .ord_sportMenu_high2 .ord_sportName{width:150px;}
+.ord_sportName span.ordH3, .ord_sportName span.ordH4{ display:block; width:130px; line-height:13px;word-break:break-word;}
+.ord_sportName span.ordH4{color:#946213; margin-top:8px;}
+.ord_sportArr, .ord_sportArr_on{ display:block;width:35px;background:url(/content/images/pe/ord_miniarr.png) no-repeat left center;}
+.ord_sportArr_on{ background:url(/content/images/pe/ord_miniarr_on.png) no-repeat left center;}
+
+.ord_sportMenu_high ul, .ord_sportMenu_high2 ul{ background-color:#fff; padding:3px 10px 11px 10px; margin-top:11px}
+.ord_sportMenu_high li, .ord_sportMenu_high2 li{font-size:13px; color:#45403b; margin-top:11px;}
+.ord_sportMenu_high li h5, .ord_sportMenu_high li h6,.ord_sportMenu_high2 li h5, .ord_sportMenu_high2 li h6{ display:inline-block; width:150px}
+.ord_sportMenu_high li h6,.ord_sportMenu_high2 li h6{ width:30px; text-align:right}
+.ord_sportMenu_high li:hover, .ord_sportMenu_high2 li:hover, .ord_sportMenu_high li.On, .ord_sportMenu_high2 li.On{ color:#e76121}
+
+.ord_parlyG{ height:40px;padding-left:10px; background-color: #27a67b; }
+.ord_parlyG ul{ width:70%;float:left; line-height:40px;color:#fff; text-align:left; font-size:15px; font-weight:bold;}
+.ord_parlyNUM{ display:block; float:right; width:27px; height:39px; line-height:39px;background:url(../../images/pe/ord_parlyNUM.png) no-repeat center; text-align:center;color:#fff; font-size:13px;  margin-right:10px;}
+
+/*menu 各球類小圖示*/
+.ord_sportFT_nor_off, .ord_sportBK_nor_off, .ord_sportTN_nor_off, .ord_sportBM_nor_off, .ord_sportVB_nor_off, .ord_sportTT_nor_off, .ord_sportBS_nor_off, .ord_sportOT_nor_off, .ord_sportFT_nor_on, .ord_sportBK_nor_on, .ord_sportTN_nor_on, .ord_sportBM_nor_on, .ord_sportVB_nor_on, .ord_sportTT_nor_on, .ord_sportBS_nor_on, .ord_sportOT_nor_on{background:url(../../images/pe/ord_sportIcon.png) no-repeat 160px 4px; }
+.ord_sportBK_nor_off{ background-position:160px -178px;}
+.ord_sportTN_nor_off{ background-position:160px -369px;}
+.ord_sportVB_nor_off{ background-position:160px -556px;}
+.ord_sportBM_nor_off{ background-position:160px -742px;}
+.ord_sportTT_nor_off{ background-position:160px -928px;}
+.ord_sportBS_nor_off{ background-position:160px -1115px;}
+.ord_sportOT_nor_off{ background-position:160px -1302px;}
+
+.ord_sportMenu_InPlay div:hover, div.ord_sportFT_nor_on, div.ord_sportBK_nor_on, div.ord_sportTN_nor_on, div.ord_sportBM_nor_on, div.ord_sportVB_nor_on, div.ord_sportTT_nor_on, div.ord_sportBS_nor_on, div.ord_sportOT_nor_on{ color:#e76121}
+.ord_sportFT_nor_off:hover, .ord_sportFT_nor_on{background-position:160px -136px;}
+.ord_sportBK_nor_off:hover, .ord_sportBK_nor_on{background-position:160px -318px;}
+.ord_sportTN_nor_off:hover, .ord_sportTN_nor_on{background-position:160px -509px;}
+.ord_sportVB_nor_off:hover, .ord_sportVB_nor_on{background-position:160px -696px;}
+.ord_sportBM_nor_off:hover, .ord_sportBM_nor_on{background-position:160px -882px;}
+.ord_sportTT_nor_off:hover, .ord_sportTT_nor_on{background-position:160px -1068px;}
+.ord_sportBS_nor_off:hover, .ord_sportBS_nor_on{background-position:160px -1255px;}
+.ord_sportOT_nor_off:hover, .ord_sportOT_nor_on{background-position:160px -1442px;}
+
+.ord_sportFT_off, .ord_sportBK_off, .ord_sportTN_off, .ord_sportBM_off, .ord_sportVB_off, .ord_sportTT_off, .ord_sportBS_off, .ord_sportOT_off, .ord_sportFT_on, .ord_sportBK_on, .ord_sportTN_on, .ord_sportBM_on, .ord_sportVB_on, .ord_sportTT_on, .ord_sportBS_on, .ord_sportOT_on, .ord_sportFT_noGame, .ord_sportBK_noGame, .ord_sportTN_noGame, .ord_sportBM_noGame, .ord_sportVB_noGame, .ord_sportTT_noGame, .ord_sportBS_noGame, .ord_sportOT_noGame{ font-size:13px; color:#d9caad; margin-top:15px; background:url(../../images/pe/ord_sportIcon.png) no-repeat 172px -93px }
+
+
+.ord_sportBK_off{ background-position:172px -275px;}
+.ord_sportTN_off{ background-position:172px -466px;}
+.ord_sportVB_off{ background-position:172px -653px;}
+.ord_sportBM_off{ background-position:172px -840px;}
+.ord_sportTT_off{ background-position:172px -1026px;}
+.ord_sportBS_off{ background-position:172px -1213px;}
+.ord_sportOT_off{ background-position:172px -1399px;}
+
+
+.ord_sportFT_off:hover, .ord_sportBK_off:hover, .ord_sportTN_off:hover, .ord_sportBM_off:hover, .ord_sportVB_off:hover, .ord_sportTT_off:hover, .ord_sportBS_off:hover, .ord_sportOT_off:hover, .ord_sportFT_on, .ord_sportBK_on, .ord_sportTN_on, .ord_sportBM_on, .ord_sportVB_on, .ord_sportTT_on, .ord_sportBS_on, .ord_sportOT_on, .ord_sportFT_noGame, .ord_sportBK_noGame, .ord_sportTN_noGame, .ord_sportBM_noGame, .ord_sportVB_noGame, .ord_sportTT_noGame, .ord_sportBS_noGame, .ord_sportOT_noGame{ color:#ffbe55}
+
+.ord_sportFT_on, .ord_sportFT_off:hover{ background-position:172px -47px;}
+.ord_sportBK_on, .ord_sportBK_off:hover{ background-position:172px -229px;}
+.ord_sportTN_on, .ord_sportTN_off:hover{ background-position:172px -420px;}
+.ord_sportVB_on, .ord_sportVB_off:hover{ background-position:172px -606px;}
+.ord_sportBM_on, .ord_sportBM_off:hover{ background-position:172px -793px;}
+.ord_sportTT_on, .ord_sportTT_off:hover{ background-position:172px -979px;}
+.ord_sportBS_on, .ord_sportBS_off:hover{ background-position:172px -1166px;}
+.ord_sportOT_on, .ord_sportOT_off:hover{ background-position:172px -1353px;}
+
+/*為了籃球特製*/
+.ord_sportBK_nor_off .ord_sportDigit, .ord_sportBK_nor_on .ord_sportDigit, .ord_sportBK_off .ord_sportDigit, .ord_sportBK_on .ord_sportDigit{ line-height:23px;}
+
+.ord_sportMenu_InPlay div.ord_sportBK_nor_off span, .ord_sportMenu_Today div.ord_sportBK_nor_off span, .ord_sportMenu_WorldCup div.ord_sportBK_nor_off span, .ord_sportMenu_InPlay div.ord_sportBK_nor_on span, .ord_sportMenu_Today div.ord_sportBK_nor_on span, .ord_sportMenu_WorldCup div.ord_sportBK_nor_on span, .ord_sportMenu_InPlay div.ord_sportBK_off span, .ord_sportMenu_Today div.ord_sportBK_off span, .ord_sportMenu_WorldCup div.ord_sportBK_off span,.ord_sportMenu_InPlay div.ord_sportBK_on span, .ord_sportMenu_Today div.ord_sportBK_on span, .ord_sportMenu_WorldCup div.ord_sportBK_on span{ float:left; line-height:23px;}
+
+/*為了其他球特製*/
+.ord_sportOT_nor_off .ord_sportDigit, .ord_sportOT_nor_on .ord_sportDigit, .ord_sportOT_off .ord_sportDigit, .ord_sportOT_on .ord_sportDigit{ line-height:20px;}
+
+.ord_sportMenu_InPlay div.ord_sportOT_nor_off span, .ord_sportMenu_Today div.ord_sportOT_nor_off span, .ord_sportMenu_WorldCup div.ord_sportOT_nor_off span, .ord_sportMenu_InPlay div.ord_sportOT_nor_on span, .ord_sportMenu_Today div.ord_sportOT_nor_on span, .ord_sportMenu_WorldCup div.ord_sportOT_nor_on span, .ord_sportMenu_InPlay div.ord_sportOT_off span, .ord_sportMenu_Today div.ord_sportOT_off span, .ord_sportMenu_WorldCup div.ord_sportOT_off span,.ord_sportMenu_InPlay div.ord_sportOT_on span, .ord_sportMenu_Today div.ord_sportOT_on span, .ord_sportMenu_WorldCup div.ord_sportOT_on span{ float:left; line-height:20px;}
+
+.ord_sportFT_high{background:url(../../images/pe/ord_highIconFT01.png) no-repeat 172px center }
+.ord_sportBK_high{ background:url(../../images/pe/ord_highIconBK01.png) no-repeat 172px center}
+.ord_sportTN_high{ background:url(../../images/pe/ord_highIconTN01.png) no-repeat 172px center}
+.ord_sportVB_high{ background:url(../../images/pe/ord_highIconVB01.png) no-repeat 172px center}
+.ord_sportBM_high{ background:url(../../images/pe/ord_highIconBM01.png) no-repeat 172px center}
+.ord_sportTT_high{ background:url(../../images/pe/ord_highIconTT01.png) no-repeat 172px center}
+.ord_sportBS_high{ background:url(../../images/pe/ord_highIconBS01.png) no-repeat 172px center}
+.ord_sportOT_high{ background:url(../../images/pe/ord_highIconOT01.png) no-repeat 172px center}
+
+.ord_sportMenu_high div:hover, .ord_sportMenu_high2 div:hover, .ord_sportFT_high_on h3, .ord_sportBK_high_on h3, .ord_sportTN_high_on h3, .ord_sportBM_high_on h3, .ord_sportVB_high_on h3, .ord_sportTT_high_on h3, .ord_sportBS_high_on h3, .ord_sportOT_high_on h3{ color:#e76121}
+.ord_sportFT_high_on, .ord_sportFT_high:hover{ background:url(../../images/pe/ord_highIconFT02.png) no-repeat 172px center}
+.ord_sportBK_high_on, .ord_sportBK_high:hover{ background:url(../../images/pe/ord_highIconBK02.png) no-repeat 172px center}
+.ord_sportTN_high_on, .ord_sportTN_high:hover{ background:url(../../images/pe/ord_highIconTN02.png) no-repeat 172px center}
+.ord_sportVB_high_on, .ord_sportVB_high:hover{ background:url(../../images/pe/ord_highIconVB02.png) no-repeat 172px center}
+.ord_sportBM_high_on, .ord_sportBM_high:hover{ background:url(../../images/pe/ord_highIconBM02.png) no-repeat 172px center}
+.ord_sportTT_high_on, .ord_sportTT_high:hover{ background:url(../../images/pe/ord_highIconTT02.png) no-repeat 172px center}
+.ord_sportBS_high_on, .ord_sportBS_high:hover{ background:url(../../images/pe/ord_highIconBS02.png) no-repeat 172px center}
+.ord_sportOT_high_on, .ord_sportOT_high:hover{ background:url(../../images/pe/ord_highIconOT02.png) no-repeat 172px center}
+
+
+/*order_slip.html*/
+.ord_betAreaG{}
+.ord_betArea, .ord_betAreaP, .ord_betArea_C, .ord_betAreaP_C{ position:relative;background-color:#fff; padding:8px 10px 5px;}
+.ord_betArea_C, .ord_betAreaP_C{ background-color:#fae2d6}
+.ord_Mask{ position:absolute; width:100%; height:100%;background:url(../../images/pe/ord_Mask.png); top:0; left:0;}
+.ord_returnBTN{ height:40px; line-height:40px; padding-left:30px;background: url(../../images/pe/ord_miniBTN.png) no-repeat 5px 13px #776455; font-size:15px; color:#fff1d6;}
+.ord_returnBTN:hover{ background-color:#85705f;}
+.ord_noOrder{/* height:47px;中文免高度*/line-height:16px; padding:7px 10px 10px; background-color:#fff; font-size:14px; color:#45403b;}
+
+
+.ord_betArea_wordTop{ border-bottom:1px #e1ccbc dashed; padding-bottom:2px;}
+.ord_betArea_wordBottom{ padding:9px 0 0 }
+.ord_betArea_wordTop li, .ord_betArea_wordBottom li{ font-size:13px; line-height:15px; margin-bottom:5px;}
+.ord_betArea_wordBottom li{margin-bottom:0;}
+.ord_vWord{color:#8a7566; margin:0 7px}
+
+.ord_betAreaP, .ord_betAreaP_C{ padding-top:5px;border-bottom:1px solid #d5c19e}/*過關專用*/
+.ord_betCloseBTN{ position:absolute; display:block;width:16px; height:15px; background:url(../../images/pe/ord_miniBTN.png) no-repeat center -91px; top:7px; left:170px;}
+.ord_betCloseBTN:hover{ background-position:center -116px;}
+.ord_remind{ position:relative;display:inline-block; width:16px; height:15px; background:url(../../images/pe/ord_miniBTN.png) center -65px no-repeat; margin-right:5px; top:2px;}
+.ord_remind_txt{ position:absolute; display:block;background-color:#e4e2dd; border:1px solid #bba898; color:#52402a; padding:3px 10px; text-align:center; white-space:nowrap; top:17px; left:2px;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; visibility:hidden}
+.ord_remind:hover .ord_remind_txt{ visibility:visible}
+
+.ord_betFuntion{}
+.ord_enterNUMG{ background-color:#423328; padding:18px 0 10px 20px}
+.ord_NUM{ position:relative;width:180px; height:40px; padding:5px 5px 5px 2px; background: url(../images/ord_NUM.png) no-repeat;left:4px;}
+.ord_NUM input{ float:left;width:138px;height:30px; line-height:30px;font-size:14px;color:#323232; border:none;text-indent: 10px;}
+.ord_delBTN{float:left; display:block; width:30px; height:30px;background:url(../images/ord_delBTN.png) no-repeat top;}
+.ord_delBTN:hover{ background-position:bottom}
+.ord_SUM{ font-size:13px; margin-top:9px;}
+.ord_SUM_L{ display:inline-block;width:40%; text-align:left; color:#c3b294}
+.ord_SUM_R{ display:inline-block;width:56%; text-align:right; color:#c4eebc}
+.ord_scChange{ display:inline-block; width:38px; height:20px; line-height:20px; background:url(../../images/pe/ord_scChange.png) no-repeat; color:#fff; font-weight:bold; text-align:center;}
+
+
+.ord_enterBTNG{ background-color:#281f1a; padding:0px 3px 10px 24px; height: 70px;}
+.ord_enterBTNG span{ display:block; float:left; width:55px; height:25px;border-radius: 4px; line-height:25px;background: #644e3d; color:#c3b294; font-size:13px; text-align:center; margin:10px 6px 0 0}
+.ord_enterBTNG span:hover{ background:#b48f65; color:#f9f0e5}
+.ord_enterBTNG span.off{ background-position:bottom; color:#4f433d;cursor:default;}
+
+.ord_warnG, .ord_warnG_auto, .ord_succG{width:100%;padding:10px 10px 10px 30px;background: #e77644; font-size:13px; color:#fff;}
+.ord_warnG span, .ord_warnG_auto span, .ord_succG span{ display:table-cell; vertical-align:middle; line-height:16px;}
+.ord_warnG_auto{height:auto; padding-top:11px; padding-bottom:12px; line-height:17px;}
+.ord_succG{background: url(../../images/pe/ord_succG.png) no-repeat 7px center #738637;}
+
+
+.ord_TotalAreaG{ background-color:#423328; padding:10px 10px 24px 3px}
+.ord_betBTN, .ord_betBTN02, .ord_betBTN_off, .ord_cancalBTN{border-radius: 4px; display:block;width:180px; height:40px; line-height:40px; background:#2ebc8c; font-size:13px; color:#fff; text-align:center; margin:auto auto 10px;}
+.ord_betBTN:hover, .ord_betBTN02:hover{ background:#33d09b}
+.ord_betBTN02{ line-height:15px; padding-top:5px;}
+.ord_betBTN_off{ background-position:center -87px; color:#25654f}
+
+.ord_cancalBTN{ background:#c5b9ab; color:#423328;}
+.ord_cancalBTN:hover{background:#d7c9b9; }
+
+.ord_TotalTXT{ width:100%; font-size:13px; color:#c3b294;}
+.ord_TotalTXT td{ padding-bottom:5px;}
+
+.ord_AutoOddG{ background-color:#423328; padding:5px 10px; border-top:1px solid #513f33}
+.ord_checkBox{ width:15px; height:15px; display:block; float:left}
+.ord_AutoOddG span{  display:block; float:left; line-height:20px;font-size:13px;color:#c3b294; margin-left:6px;}
+@media \0screen\,screen\9 {.ord_AutoOddG{padding-left:7px; }
+.ord_checkBox{ width:20px; height:20px;}
+.ord_AutoOddG span{ position:relative; top:-2px;}
+}
+
+.ord_betSucc_general{ background-color:#eef4e8;}
+.ord_betSucc_general_List, .ord_betSucc_general_List_line{ padding:8px 10px 10px;}
+.ord_betSucc_general_List_line{ border-bottom:1px solid #d5c19e}
+.ord_betSucc_TB{ width:100%;border-top:1px solid #d2ddaf; margin-top:1px; margin-bottom:8px; color:#6d6b6a; font-size:13px; }
+.ord_betSucc_TB td{ padding-left:10px;padding-top:6px;}
+.ord_betSucc_stake{ color:#45403b; font-size:14px; font-weight:bold}
+.ord_checkG{ height:45px; padding:12px 10px; background-color:#423328; margin-bottom:10px;}
+.ord_checkG span{ display:block; float:left; line-height:20px;font-size:13px;color:#b6aea6; margin-left:5px;}
+
+.ord_betSucc_danger, .ord_betSucc_dangerNoHand{ background:url(../../images/pe/ord_betSucc_danger.png) no-repeat center #fae2d6;}
+.ord_betSucc_dangerNoHand{ background-image:none}
+.ord_betSucc_danger .ord_betSucc_TB, .ord_betSucc_dangerNoHand .ord_betSucc_TB{border-top:1px solid #f4c2ab;}
+
+.ord_DIV_Mask{ position:absolute; width:100%;height: 100%;  background:url(../images/ord_DIV_Mask.png); top:0; left:0;}
+.ord_confirmation{ background-color:#19130f;padding:5px; margin-top:165px;}
+.ord_confirmation ul{ padding:9px 5px 1px 5px; background-color:#fff;}
+.ord_confirmation ul li{ color:#72685e; font-size:13px; margin-bottom:7px;}
+.ord_miniBTNG{ padding:10px 5px 1px 5px;background-color:#513f33}
+
+
+/*order_mybet.html*/
+.ord_unsetDIV{}
+.ord_setDIV{border-top:1px solid #423328; background: #e1d6c2;color: #fff;}
+.ord_setTitle, .ord_setTitle_off{color: #fff; padding:10px 0 10px 6px; background: url(../../images/pe/bet_title_arrow_up.png) no-repeat 10px center #513f33; }
+.ord_setTitle_off{background: url(../../images/pe/bet_title_arrow_down.png) no-repeat 10px center #513f33;}
+
+.ord_unsetDIV .ord_setTitle ul, .ord_setDIV .ord_setTitle ul, .ord_unsetDIV .ord_setTitle_off ul, .ord_setDIV .ord_setTitle_off ul{ width:70%;float:left; line-height:25px;color:#fff1d6; font-size:15px; font-weight:bold;}
+.ord_setDIV .ord_setTitle ul, .ord_setDIV .ord_setTitle_off ul{ line-height:13px;}
+.ord_setTitle_miniTxt{ line-height:18px; color:#c0b49e; font-size:14px; font-weight:normal;}
+.ord_setNUM{ display:block; float:right; width:25px; height:25px; line-height:25px;background:url(../../images/pe/ord_setNUM.png) no-repeat; text-align:center;color:#fff1d6; font-size:14px;  margin-right:13px;}
+
+.ord_noMyBet{ background-color:#fff; color:#45403b; font-size:13px; padding:9px 10px 8px 10px;}
+
+.ord_viewG{ background-color:#423328; padding:10px 0;}
+.ord_viewBTN{ display:block;width:180px; height:40px; line-height:40px; background: url(../../images/pe/ord_betBTN.png) no-repeat  center -166px; font-size:13px;color:#423328;text-align:center; margin:auto}
+.ord_viewBTN:hover{ background-position: center -209px;}
+
+
+.ord_mybet_dangerY, .ord_mybet_dangerN, .ord_mybet_cancel, .ord_mybet_nomal{ position:relative;background:url(../../images/pe/ord_betSucc_danger.png) no-repeat center #fae2d6; padding-bottom:3px;border-bottom:1px solid #d5c19e;}
+.ord_mybet_dangerY, .ord_mybet_nomal{background:#fff;}
+.ord_mybet_cancel, .ord_ul_cancel{ background:#fae2d6}
+.ord_crossBTN{ position:absolute;display:block;width:16px;height:15px; background:url(../../images/pe/ord_miniBTN.png) no-repeat center -157px; top:5px; right:10px}
+.ord_crossBTN:hover{ background-position:center -187px;}
+.ord_mybet_dangerY .ord_betSucc_general_List, .ord_mybet_dangerN .ord_betSucc_general_List, .ord_mybet_nomal .ord_betSucc_general_List, .ord_mybet_cancel .ord_betSucc_general_List{ padding:8px 10px 2px;}
+.ord_mybet_dangerY .ord_betArea_wordTop, .ord_mybet_dangerY .ord_betArea_wordBottom, .ord_mybet_dangerN .ord_betArea_wordTop, .ord_mybet_dangerN .ord_betArea_wordBottom, .ord_mybet_nomal .ord_betArea_wordTop, .ord_mybet_nomal .ord_betArea_wordBottom, .ord_mybet_cancel .ord_betArea_wordTop, .ord_mybet_cancel .ord_betArea_wordBottom, .ord_winlossG .ord_betArea_wordTop, .ord_winlossG .ord_betArea_wordBottom, .ord_winlossG_cel .ord_betArea_wordTop, .ord_winlossG_cel .ord_betArea_wordBottom{ border-bottom:1px dashed #dcb99f}
+.ord_mybet_dangerY .ord_betArea_wordBottom, .ord_mybet_dangerN .ord_betArea_wordBottom, .ord_mybet_nomal .ord_betArea_wordBottom, .ord_mybet_cancel .ord_betArea_wordBottom, .ord_winlossG .ord_betArea_wordBottom, .ord_winlossG_cel .ord_betArea_wordBottom{ padding-bottom:7px;}
+
+
+.ord_mybet_dangerY .ord_betSucc_TB, .ord_mybet_dangerN .ord_betSucc_TB, .ord_mybet_nomal .ord_betSucc_TB, .ord_mybet_cancel .ord_betSucc_TB, .ord_winlossDIV .ord_betSucc_TB{ border-top:none;}
+
+.ord_betSucc_general_ListSP, .ord_betSucc_general_ListSS{ padding:8px 0 2px;}/*li取消單特殊狀況*/
+
+.ord_betSucc_general_ListSP .ord_betArea_wordTop, .ord_betSucc_general_ListSP .ord_betArea_wordBottom, .ord_betSucc_general_ListSS .ord_betArea_wordTop, .ord_betSucc_general_ListSS .ord_betArea_wordBottom{ padding:0 10px; border-bottom:0}/*li取消單特殊狀況*/
+/*.ord_mybet_nomal .ord_betSucc_general_ListSP .ord_betArea_wordTop, .ord_mybet_nomal .ord_betSucc_general_ListSP .ord_betArea_wordBottom, .ord_mybet_nomal .ord_betSucc_general_ListSS .ord_betArea_wordTop, .ord_mybet_nomal .ord_betSucc_general_ListSS .ord_betArea_wordBottom{ padding:0 10px; border-bottom:0}li取消單特殊狀況ord_mybet_nomal指定備分*/
+
+
+.ord_betSucc_general_ListSP .ord_betArea_wordTop li, .ord_betSucc_general_ListSS .ord_betArea_wordTop li{ margin-bottom:0;border-bottom:1px dashed #dcb99f;  padding:0 0 7px;}/*li取消單特殊狀況*/
+
+
+.ord_setTxT .ord_betArea_wordTop li.BlueWordS, .ord_betSucc_general_List_line .ord_betArea_wordTop li.BlueWordS, .ord_betSucc_general_ListSP .ord_betArea_wordTop li.BlueWordS, .ord_betSucc_general_ListSS .ord_betArea_wordTop li.BlueWordS, .ord_betAreaP .ord_betArea_wordTop li.BlueWordS,.ord_winlossDIV li.BlueWordS,.ord_betSucc_general_List li.BlueWordS{ width:165px;}/*標頭球隊不超過+號*/
+.ord_parLI{ display:inline-block;width:150px;}/*球隊不超過輸贏圖示*/
+
+/*輸贏小圖示*/
+.ord_winIcon, .ord_win_halfIcon, .ord_darwIcon, .ord_lossIcon, .ord_loss_halfIcon, .ord_cancelIcon{ background:url(../../images/pe/ord_resultIcon.png) no-repeat -927px center;}
+.ord_winIcon{ background-position:-927px center}
+.ord_win_halfIcon{ background-position:-1119px center}
+.ord_darwIcon{ background-position:-1311px center}
+.ord_lossIcon{ background-position:-1503px center}
+.ord_loss_halfIcon{ background-position:-1695px center}
+.ord_cancelIcon{ background-position:-1887px center}
+
+.ord_betSucc_general_ListSP .ord_winIcon, .ord_betSucc_general_ListSP .ord_win_halfIcon, .ord_betSucc_general_ListSP .ord_darwIcon, .ord_betSucc_general_ListSP .ord_lossIcon, .ord_betSucc_general_ListSP .ord_loss_halfIcon, .ord_betSucc_general_ListSP .ord_cancelIcon, .ord_betSucc_general_ListSS .ord_betArea_wordBottom li{border-bottom:1px dashed #dcb99f;  padding:9px 0 7px; }/*li取消單特殊狀況*/
+
+
+
+.ord_winlossDIV{ position:absolute; width:100%;background-color:#fff;padding-bottom:10px;}
+.ord_winlossG, .ord_winlossG_cel{ position:relative;background-color:#fff; padding:8px 10px 0;}
+.ord_winlossG_cel, .ord_CanBG, .ord_CanBG .ord_winlossG{ background-color:#fae2d6;}
+
+.ord_Danger_word{ font-weight:bold}
+.ord_mybet_dangerY .ord_Danger_word{font-weight:bold;color:#658c18 }
+.ord_mybet_dangerN .ord_Danger_word{font-weight:bold;color:#e73619 }
+.ord_mybet_nomal .ord_Danger_word{ display:none}
+.ord_mybet_cancel .ord_Danger_word{color:#e73619 }
+
+/*已結算ul左右兩個結算問題box*/
+.ord_timeEvent{}
+.ord_timeEventL_B, .ord_timeEventR_B, .ord_timeEventL_S, .ord_timeEventR_S{display:block; float:left;width:50%;word-break: break-word;}
+.ord_timeEventL_B{ width:100%}
+.ord_timeEventR_B{ width:0}
+.ord_timeEventR_B, .ord_timeEventR_S{ text-align:right}
+
+
+
+
+
+
+
+
+/*之後改金額用*/
+.ord_miniOKBTN, .ord_miniCancelBTN{ display:block;width:160px; height:40px; line-height:40px; background: url(../../images/pe/ord_miniCOBTN.png) no-repeat top; color:#fff; font-size:13px; text-align:center; margin-bottom:10px;}
+.ord_miniCancelBTN{ color:#423328;}
+
+
+
+/*小廣告*/
+.ord_adG span img{ display:block;width:100%; margin:auto}
+
+
+
+/*word type*/
+.BlueWord,.BlueWordS{ color:#0b8dd0}
+.light_BrownWord{ color:#72685e}
+.light_BrownWord02{ color:#8a7566}
+.dark_BrownWord{ color:#45403b}
+.RedWord, td.RedWord{ color:#e73619}
+.GreenWord{ color:#2ebc8c}
+.dark_GreenWord, td.dark_GreenWord{ color:#658c18}
+.GrayWord, td.GrayWord{ color:#6d6b6a}
+.dark_grayWord, td.dark_grayWord{ color:#312e2c}
+.ior_blue{ color:#1f497d}/*負賠率*/
+
+.redFatWord{font-weight:bold;color:#e73619;padding: 3px;padding-left:5px;padding-right:5px; border-radius: 3px;}
+.fatWord{ font-weight:bold}
+.miniWord{ font-size:12px; letter-spacing:-1.5px}
+
+td.Word_Toleft{ text-align:left}
+td.Word_Toright{ text-align:right}
+td.Word_Paddleft, li.Word_Paddleft{ text-align:left; padding-left:10px; padding-right:0}
+td.Word_Paddright, li.Word_Paddright{ text-align:right; padding-right:10px; padding-left:0}
+
+/*all use*/
+li.no_margin, div.no_margin, span.no_margin, .ord_memu2 span.no_margin, .ord_sportMenu_Today ul li.no_margin{ margin:0}
+.upperWord, .ord_DIV h1, .ord_memu span, .ord_memu2 span, .ord_sportName h3, .ord_betBTN, .ord_betBTN02, .ord_betBTN_off, .ord_cancalBTN, .ord_miniOKBTN, .ord_miniCancelBTN, .ord_setTitle, .ord_setTitle_off{text-transform:uppercase;cursor: pointer;}
+.ord_sportMenu_InPlay div span, .ord_sportMenu_Today div span, .ord_sportName h4, .ord_setTitle_miniTxt{text-transform:capitalize;}
+
+/*------BTN------*/
+.ord_memuBTN, .ord_sportMenu_InPlay div, .ord_sportMenu_Today div, .ord_sportMenu_Today ul li, .ord_sportMenu_WorldCup div, .ord_sportMenu_high div,.ord_sportMenu_high2 div, .ord_sportMenu_high li,.ord_sportMenu_high2 li, .ord_delBTN, .ord_enterBTNG span, .ord_betBTN, .ord_betBTN02, .ord_cancalBTN, .ord_returnBTN, .ord_remind, .ord_betCloseBTN, .ord_miniOKBTN, .ord_miniCancelBTN, .ord_betSucc_danger, .ord_setTitle, .ord_setTitle_off, .ord_crossBTN, .ord_mybet_dangerN, .ord_viewBTN{cursor: pointer;}
+
+
+.order_list{background: #e1d6c2;padding:6px; font-family: '宋体';border-bottom: #937b52 solid 1px;}
+.order_list p{color: #19130f;}
+.ord_setTitle h1{font-size: 14px;color: #fff1d6;line-height: 18px;}
+.ord_setTitle p{font-weight: normal;font-size: 12px;color: #c0b49e;}
+.order_list .blue{color: #0000ff;}
+.order_list .zhuc{color: #2e8b57}
+.order_list .kec{color: #0000ff;}
+.order_list p{line-height: 22px;}
+
+.ord_setTitle ul{height: 40px;}
+.ord_setTitle ul li{float: left;font-weight: bold;color:#fff;font-size: 14px;background: url(../images/icon_bg.png) left -64px no-repeat;padding-left:30px;}
+.ord_setTitle ul li.on{background: url(../images/icon_bg.png) left -103px no-repeat;}
+.ord_setTitle ul li p{padding-top:6px;}
+
+

@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<title>皇冠体育</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="css/main.css" rel="stylesheet">
+<link href="layui/css/layui.css" rel="stylesheet">
+<link href="css/iconfont.css" rel="stylesheet">
+<script src="js/jquery-1.8.3.min.js"></script>
+<script src="js/main.js"></script>
+<script src="layui/layui.js"></script>
+<script src="js/getvalue.js"></script>
+<script src="js/daili_switch.js"></script>
+<script src="js/common.js"></script>
+<script src="js/partners.js"></script>
+<script src="js/jquery.serializejson.min.js"></script>
+
+
+<style>
+.layui-form-label {
+	width: 120px;
+	color: #c8c8c8;
+}
+
+.layui-form-label span {
+	padding-right: 4px;
+}
+
+.layui-input {
+	background: #d2d2d2;
+	width: 240px;
+}
+
+.tint {
+	padding-left: 150px;
+	padding-top: 4px;
+}
+
+.yellow {
+	color: #ff5722
+}
+
+#ww>div{
+margin-left: 20px;
+margin-top: -20px;
+}
+</style>
+
+
+<script type="text/javascript">
+	var daili_indx;
+	var daili_indx = $.query.get("daili");
+
+</script>
+</head>
+
+<body style="background: #1b242e">
+	<!--login being-->
+	<div class="topbar" id="header">
+		<div class="link">
+			<ul>
+				<li class="gtip" original-title="收藏金沙娱乐场"><i
+					class="iconfont icon-shoucang"
+					onclick="alert('「您使用的浏览器不支援此功能，请按“Ctrl+D”键手动加入收藏。」');"></i></li>
+				<li class="gtip" original-title="设为首页"><i
+					class="iconfont icon-shouye"
+					onclick="alert('「您使用的浏览器不支援此功能，请手动进行设置。」');"></i></li>
+				<li class="gtip" original-title="保存到桌面"><i
+					class="iconfont icon-baocun"></i></li>
+				<li><a id="dlzcid" href="partners.html?daili=2"
+					style="color: rgb(255, 0, 0);">代理注册</a></li>
+				<li> 
+					<a id="hzjmid" href="partners.html?daili=2" style="color: rgb(255, 0, 0);">合作加盟</a>
+				</li>
+				<li><a id="dldrid" href="" target="_blank"
+					style="color: rgb(255, 0, 0);">代理登入</a></li>
+				<li><a href="appDownload.html" target="_blank">APP手机下载</a></li>
+			</ul>
+		</div>
+
+		<div class="operate">
+			<!--未登录 begin  -->
+			<ul class="no_login" style="display: block" id="no_login">
+				<li class="inp"><i class="iconfont icon-username"></i> 
+					<input id="login_accout" type="text" class="_inp" placeholder="用户" maxlength="20">
+				</li>
+				<li class="inp"><i class="iconfont icon-icon-lock"></i> 
+					<input id="login_pwd" type="password" class="_inp" placeholder="密码" maxlength="20">
+				</li>
+
+				<li class="captcha">
+					<input id="verify_code" class="_inp" type="text" name="BETVALIDATECODEL" maxlength="5" placeholder="输入验证码">
+				</li>
+				<li class="captcha">
+				 	<img id="verify_code_img" class="code" src="images/code.jpg"  style="width:50px;height:30px;">
+				</li>
+				<li>
+					<a href="javascript:;" class="btn_login" onclick="BetLogin()">立即登录</a>
+				</li>
+				<li>
+					<a href="register.html" class="btn_login" onclick="">注册</a>
+				</li>
+				<li style="padding-right: 10px;"><a href="javascript:;"
+					onclick="alert('「请联系在线客服找回密码！」');" class="forgot_btn">忘记密码</a></li>
+
+
+			</ul>
+
+			<!--未登录 end  -->
+
+			<!--已登录 begin  -->
+			<ul class="logined" style="display: none;" id="logined">
+				<li class="balance">帐户余额： <b id="topBalance"></b>￥</a>
+				</li>
+				<li id="saveMoney" class="money">
+                    <a href="admin/member/recharge.html"  target="view_window">存款</a>
+                </li>
+                <li id="getMoney" class="money">
+                    <a href="admin/member/tixain_aply.html" target="view_window">取款</a>
+                </li>
+				<li>
+					<a href="admin/member/user_info.html" class="btn_login"  target="view_window" style="position:relative;top:7px;">个人中心</a>
+				</li>
+				<li class="user"><a href="javascript:;" class="user_icon">
+						<i class="iconfont icon-user"></i> <span id="member_name">amber</span> <i
+						class="iconfont icon-xiala"></i>
+				</a>
+					<div class="drop" style="display: none;">
+						<!-- <a href="#"> <i class="iconfont icon-icon-test"></i>额度转换 </a> -->
+						<a href="admin/member/user_info.html?flag=updatePwd"> <i class="iconfont icon-mima"></i>修改密码
+						</a> <a href="javascript:;" onclick="EixtLogin()"> <i
+							class="iconfont icon-tuichu6"></i>退出
+						</a>
+					</div></li>
+				<li class="info"><a href="javascript:;" class="email"> <i
+						class="iconfont icon-email"></i>
+				</a></li>
+			</ul>
+
+		</div>
+	</div>
+	<!--login end-->
+
+	<!--menu begin-->
+	<div class="menu">
+		<div class="wrap">
+			<div class="logo">
+				<img src="images/logo.jpg" width="140">
+			</div>
+			<div class="nav">
+				<ul>
+					<li><a href="index.html" target=""> <i
+							class="iconfont icon-home"></i> 首页
+					</a></li>
+					<li><a href="game.html" target=""> <i
+							class="iconfont icon-kickball"></i> 体育赛事
+					</a></li>
+					<li><a href="appDownload.html" target=""> <i
+							class="iconfont icon-mobile_pay"></i> 手机下注
+					</a></li>
+					<li><a href="partners.html" target=""> <i
+							class="iconfont icon-user"></i> 代理中心
+					</a></li>
+					<li><a href="help.html" target=""> <i
+							class="iconfont icon-help"></i> 帮助中心
+					</a></li>
+					<li><a href="#" target="" class="zixun_btn"> <i class="iconfont icon-kefu"></i>
+							在线客服
+					</a></li>
+				</ul>
+
+			</div>
+		</div>
+	</div>
+	<!--menu end-->
+
+	<!-- banner begin -->
+	<DIV style="background: #000;">
+
+		<div class="wrap">
+			<img src="images/partners_banner.jpg">
+		</DIV>
+	</DIV>
+	<!-- banner end  -->
+
+	<!--客服-->
+	<div class="slider_kefu">
+		<div class="inside">
+			<img src="images/kefu_img.png">
+			<div align="center" class="zixun">
+				<a id="zixun_btn" href="javascript:;" class="zixun_btn">点击咨询 </a>
+			</div>
+			<div align="center" class="zixun mt10">
+				<img src="images/kef.jpg">
+			</div>
+			<div>
+				<a href="javascript:;" class="close_btn"> <i
+					class="iconfont icon-guanbi"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		$(document).ready(function() {
+
+			$(".partners_menu li").click(function() {
+				var index = $(".partners_menu li").index(this);
+				$(".partners_menu li").removeClass("on");
+				$(this).addClass("on");
+				$(".partners_content").hide();
+				$(".partners_content").eq(index).show();
+				
+				if($(this).attr("id") == 'dailiDl'){
+					window.open(SysteLoginUrl); 
+				}
+			})
+		})
+	</script>
+
+	<div class="partners_box">
+		<div class="wrap">
+			<ul class="partners_menu">
+				<li class="on">联盟方案</li>
+				<li>联盟协议</li>
+				<li>代理注册</li>
+				<li id="dailiDl">代理登录</li>
+			</ul>
+			<div class="clear_it"></div>
+			<!--联盟方案-->
+			<div>
+				<div class="partners_content" style="display: block;">
+					<p>皇冠体育作为国际最具代表性地位的知名博彩公司，拥有实体赌场与线上博彩双执照，提供最广范围并最具竞争力的产品，多年来稳健的经营，成功地将皇冠用户扩展至全球各地，我们真诚为您打造最高档次的合作平台，最好的代理加盟方案，八大加盟优势让您无法抗拒！</p>
+					<p>首创全新代理模式，最高的返佣模式；</p>
+					<p>零成本，零风险，高回报，佣金快速到账；</p>
+					<p>双重收益，无论线下客户输赢，您都有稳定的高收入；</p>
+					<p>提款快速金额不封顶，实力雄厚；</p>
+					<p>拥有实体赌场与线上博彩执照，信誉保证；</p>
+					<p>多年大力推广，品牌享誉国际，代理可坐享广告名牌效应；</p>
+					<p>数据信息详尽，可查阅下线投注记录。</p>
+					<p>皇冠体育给予合作伙伴最高的盈利回报只要您成为我们的代理，只要您拥有人脉或用心推广，发展下线，无需任何费用，更不用担心线下盈亏，您都可以坐等高收益。</p>
+					<p></p>
+				</div>
+
+				<!--联盟协议-->
+				<div class="partners_content" style="display: none;">
+					<h1>一、皇冠体育对代理联盟的权利与义务</h1>
+					<p>&nbsp;&nbsp;&nbsp;&nbsp;皇冠体育的客服部会登记联盟的会员并会观察他们的投注状况。联盟及会员必须同意并遵守皇冠体育的会员条例，政策及操作程式。皇冠体育保留拒绝或冻结联盟/会员帐户权利
+					代理联盟可随时登入介面观察旗下会员的下注状况及会员在网站的活动概况。 皇冠体育的客服部会根据代理联盟旗下的会员计算所得的佣金。皇冠体育保留可以修改合约书上的任何条例，包括: 现有的佣金范围、佣金计划、付款程式、及参考计划条例的权力，皇冠体育会以电邮、网站公告等方法通知代理联盟。 代理联盟对于所做的修改有异议，代理联盟可选择终止合约，或洽客服人员反映意见。 如修改后代理联盟无任何异议，便视作默认合约修改，代理联盟必须遵守更改后的相关规定。
+					<h1>二、代理联盟对皇冠体育的权力及义务</h1>
+					<p>&nbsp;&nbsp;&nbsp;&nbsp;代理联盟应尽其所能，广泛地宣传、销售及推广皇冠体育，使代理本身及皇冠体育的利润最大化。代理联盟可在不违反法律下，以正面形象宣传、销售及推广皇冠体育，并有责任义务告知旗下会员所有皇冠体育的相关优惠条件及产品。
+					代理联盟选择的皇冠体育推广手法若需付费，则代理应承担该费用。
+					任何皇冠体育相关资讯包括: 标志、报表、游戏画面、图样、文案等，代理联盟不得私自复制、公开、分发有关材料，皇冠体育保留法律追诉权。 如代理在做业务推广有相关需要，请随时洽皇冠体育。</p>
+					<h1>三、规则条款</h1>
+					<p>&nbsp;&nbsp;&nbsp;&nbsp;各阶层代理联盟不可在未经皇冠赌场许可情况下开设双/多个的代理帐号，也不可从皇冠体育帐户或相关人士赚取佣金。请谨记任何阶层代理不能用代理帐户下注，皇冠体育有权终止并封存帐号及所有在游戏中赚取的佣金。
+					为确保所有皇冠体育会员账号隐私与权益，皇冠体育不会提供任何会员密码，或会员个人资料。各阶层代理联盟亦不得以任何方式取得会员资料，或任意登入下层会员账号，如发现代理联盟有侵害皇冠赌场会员隐私行为，皇冠体育有权取消代理联盟红利，并取消代理联盟账号。
+					代理联盟旗下的会员不得开设多于一个的帐户。皇冠体育有权要求会员提供有效的身份证明以验证会员的身份，并保留以IP判定是否重复会员的权利。如违反上述事项，皇冠体育有权终止玩家进行游戏并封存帐号及所有于游戏中赚取的佣金
+					代理联盟不可为自己或其他联盟下的有效投注会员,只能是公司直属下的有效投注会员, 代理每月需增加1个的下线有效投注会员（有效投注为每月至少进行1000元的有效投注），如有违反联盟协议皇冠赌场有权终止并封存帐号及所有在游戏中赚取的佣金。
+					如代理联盟旗下的会员因为违反条例而被禁止享用皇冠体育的游戏，或皇冠体育退回存款给会员，皇冠体育将不会分配相应的佣金给代理联盟。如代理联盟旗下会员存款用的信用卡、银行资料须经审核，皇冠体育保留相关佣金直至审核完成。
+					合约内的条件会以皇冠体育通知接受代理联盟加入后开始执行。皇冠体育及代理联盟可随时终止此合约，在任何情况下，代理联盟如果想终止合约，都必须以书面/电邮方式提早于七日内通知皇冠体育。 代理联盟的表现会3个月审核一次，如代理联盟已不是现有的合作成员则本合约书可以在任何时间终止。如合作伙伴违反合约条例，皇冠体育有权立即终止合约。
+					在没有皇冠体育许可下，代理联盟不能透露及授权皇冠体育相关密资料，包括代理联盟所获得的回馈、佣金报表、计算等;代理联盟有义务在合约终止后仍执行机密档及资料的保密。
+					在合约终止后，代理联盟及皇冠体育将不须要履行双方的权利及义务。终止合约并不会解除代理联盟于终止合约前应履行的义务。</p>
+					
+					<div style="height: 200px;"></div>
+				</div>
+
+				<!--代理注册-->
+				<div class="partners_content layui-form" style="display: none;">
+					<h2>
+						注册帐号 <span>（注意:真实姓名和提款有关,请务必填写正确信息;登录密码和取款密码不能一样!）</span>
+					</h2>
+					<form id="register">
+						<input id="type" type="hidden" name="type" value="1">
+						<input id="salt" type="hidden" name="salt">
+						<input id="registerType" type="hidden" name="registerType" value="0">
+						<input type="hidden" name="msg">
+						<div class="layui-form-item">
+							<label class="layui-form-label"> <span class="yellow">*</span>帐号
+							</label>
+							<div class="layui-input-inline">
+								<input type="text" name="account" required lay-verify="account"
+									placeholder="" autocomplete="off" class="layui-input">
+							</div>
+							<!-- <div class="layui-form-mid layui-word-aux tishi">辅助文字</div> -->
+							<p class="clear_it tint">帐号：请输入4-12个字元，仅可输入英文字母及数字的组合</p>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label"> <span class="yellow">*</span>登录密码
+							</label>
+							<div class="layui-input-inline">
+								<input id="pwd" type="password" name="pwd" required lay-verify="pwd"
+									placeholder="" autocomplete="off" class="layui-input">
+							</div>
+							<p class="clear_it tint">密码规则：须为6-12位英文或数字且符合0~9或a~z字元</p>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label"> <span class="yellow">*</span>确认登录密码
+							</label>
+							<div class="layui-input-inline">
+								<input id="pwd2" type="password" name="truePwd" required
+									lay-verify="pwd" placeholder="" autocomplete="off"
+									class="layui-input">
+							</div>
+						</div>
+						
+						<div id="inviteCodeDiv" class="layui-form-item">
+							<label class="layui-form-label"> <span class="yellow">*</span>邀请码
+							</label>
+							<div class="layui-input-inline">
+								<table>
+									<tr>
+										<td>
+											<input id="inviteCode" type="text" name="inviteCode"  placeholder="" autocomplete="off" class="layui-input">
+										</td>
+										<td id="ww">
+										</td>
+										<td>
+											<a id="check-btn" lay-filter="register-btn" class="layui-btn"  style="width: 70px;">验证</a>
+										</td>
+									</tr>
+								</table>
+							</div>
+							<p class="clear_it tint">为更好的提供服务，请先填写邀请码进行验证，如无，请直接点击验证进行下一步</p>
+						</div>
+						
+						<div id="baseInfoContent" style="display: none;">
+							<h2>
+								代理资料 <span>（注意:代理资料务必真实!）</span>
+							</h2>
+							<div class="layui-form-item">
+								<label class="layui-form-label"><!--  <span class="yellow">*</span> -->真实姓名
+								</label>
+								<div class="layui-input-inline">
+									<input type="text" name="realName" placeholder="" autocomplete="off"
+										class="layui-input">
+								</div>
+							</div>
+							
+							<div class="layui-form-item">
+		                        <label class="layui-form-label">
+		                            <!-- <span class="yellow">*</span> -->QQ</label>
+		                        <div class="layui-input-inline">
+		                            <input type="text" name="qq"  placeholder="" autocomplete="off" class="layui-input">
+		                        </div>
+		                        
+		                    </div>
+	
+							<div class="layui-form-item">
+								<label class="layui-form-label"><!--  <span class="yellow">*</span> -->电话
+								</label>
+								<div class="layui-input-inline">
+									<input id="phone" type="text" name="phone" lay-verify="phone"
+										placeholder="" autocomplete="off" class="layui-input">
+								</div>
+							</div>
+						</div>
+						
+						<div id="bankInfoContent" style="display: none;">
+							<!-- <div class="layui-form-item">
+								<label class="layui-form-label"> <span class="yellow">*</span>验证码
+								</label>
+								<div class="layui-input-inline">
+									<input type="text" name="msg" required
+										lay-verify="required" placeholder="" autocomplete="off"
+										class="layui-input">
+								</div>
+								<div class="layui-form-mid layui-word-aux"
+									style="margin-left: 50px;">
+									<a id="smsCode" href="javascript:;" class="get_yzCode" enabled = "true">获取验证码</a> 
+								</div>
+							</div> -->
+							
+	
+							<div class="layui-form-item">
+								<label class="layui-form-label"> <span class="yellow">*</span>取款密码
+								</label>
+								<div class="layui-input-inline">
+									<input id="bankPwd" type="password" name="bankPwd" required
+										lay-verify="required" placeholder="" autocomplete="off"
+										class="layui-input">
+								</div>
+							</div>
+							<div class="layui-form-item">
+								<label class="layui-form-label"> <span class="yellow">*</span>确认取款密码
+								</label>
+								<div class="layui-input-inline">
+									<input id="bankPwd2" type="password" name="trueBankPwd" required
+										lay-verify="required" placeholder="" autocomplete="off"
+										class="layui-input">
+								</div>
+							</div>
+	
+							<!-- <h2>银行信息</h2>
+	
+							<div class="layui-form-item">
+								<label class="layui-form-label"> <span class="yellow">*</span>银行名称
+								</label>
+								<div class="layui-input-inline">
+									<select name="bankName"  required lay-verify="required" class="layui-input">
+		                                   <option value="01020000">工商银行</option>
+		                                   <option value="01050000">建设银行</option>
+		                                   <option value="01030000">农业银行</option>
+		                                   <option value="03080000">招商银行</option>
+		                                   <option value="03010000">交通银行</option>
+		                                   <option value="01040000">中国银行</option>
+		                                   <option value="03030000">光大银行</option>
+		                                   <option value="03050000">民生银行</option>
+		                                   <option value="03090000">兴业银行</option>
+		                                   <option value="03020000">中信银行</option>
+		                                   <option value="03060000">广发银行</option>
+		                                   <option value="03100000">浦发银行</option>
+		                                   <option value="03070000">平安银行</option>
+		                                   <option value="03040000">华夏银行</option>
+		                                   <option value="04083320">宁波银行</option>
+		                                   <option value="03200000">东亚银行</option>
+		                                   <option value="04012900">上海银行</option>
+		                                   <option value="01000000">中国邮储银行</option>
+		                                   <option value="04243010">南京银行</option>
+		                                   <option value="65012900">上海农商行</option>
+		                                   <option value="03170000">渤海银行</option>
+		                                   <option value="64296510">成都银行</option>
+		                                   <option value="04031000">北京银行</option>
+		                                   <option value="64296511">徽商银行</option>
+		                                   <option value="4341101">天津银行</option>
+		                               </select>
+								</div>
+								<p class="clear_it tint">如：中国**银行**支行</p>
+							</div>
+	
+							<div class="layui-form-item">
+								<label class="layui-form-label"> <span class="yellow">*</span>卡号
+								</label>
+								<div class="layui-input-inline">
+									<input type="text" name="bankNo" required lay-verify="required"
+										placeholder="" autocomplete="off" class="layui-input">
+								</div>
+	
+							</div>
+	
+							<div class="layui-form-item">
+								<label class="layui-form-label"> <span class="yellow">*</span>持有人
+								</label>
+								<div class="layui-input-inline">
+									<input type="text" name="holderName" required
+										lay-verify="required" placeholder="" autocomplete="off"
+										class="layui-input">
+								</div>
+	
+							</div> -->
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label"></label> <input type="checkbox"
+								name="" title="我已届满合法博彩年龄﹐且同意各项开户条约。" lay-skin="primary" checked>
+						</div>
+
+						<div class="layui-form-item">
+							<label class="layui-form-label"></label>
+							<div class="layui-input-inline">
+								<button id="register-btn" lay-filter="register-btn"
+									class="layui-btn" lay-submit style="width: 240px; display: none;">提交</button>
+							</div>
+
+						</div>
+
+						<div style="height: 200px;"></div>
+					</form>
+				</div>
+
+			</div>
+
+			<!--代理登录-->
+			<!-- <div class="partners_content layui-form"
+				style="display: none; padding-top: 10px;">
+				<form id="loginForm" action="">
+					
+					<div class="layui-form-item">
+						<label class="layui-form-label">代理帐号
+						</label>
+						<div class="layui-input-inline">
+							<input type="text" name="account" required lay-verify="required"
+								placeholder="代理帐号" autocomplete="off" class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label"> </span>代理密码
+						</label>
+						<div class="layui-input-inline">
+							<input type="password" name="password" required
+								lay-verify="required" placeholder="密码" autocomplete="off"
+								class="layui-input">
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label"> 验证码</label>
+						<div class="layui-input-inline">
+							<input type="text" name="" required lay-verify="required"
+								placeholder="" autocomplete="off" class="layui-input">
+						</div>
+						<div class="layui-form-mid layui-word-aux"
+							style="margin-left: 50px;">
+							<a href="javascript:;" class=""> <img class="code"
+								src="images/code.jpg"
+								style="height: 32px; position: relative; top: -2px;">
+							</a>
+						</div>
+					</div>
+
+					<div class="layui-form-item">
+						<label class="layui-form-label"></label>
+						<div class="layui-input-inline">
+							<button id="login-btn" lay-filter="login-btn" lay-submit
+								class="layui-btn" type="button" style="width: 240px;">提交</button>
+						</div>
+
+					</div>
+				</form>
+
+				<div style="height: 100px;"></div>
+			</div> -->
+
+		</div>
+
+	</div>
+
+	<!-- <div class="footer">
+
+		<div class="bottom_menu">
+			<a href="#" class="first">关于我们</a> <a href="#">合作加盟</a> <a href="">体育赛事</a>
+			<a href="#">代理中心</a> <a href="#">帮助中心</a>
+		</div>
+
+		<div class="copyright">© 2018 皇冠体育 版权所有</div>
+	</div> -->
+	<script>
+		$(document).ready(function() {
+			$(".close_btn").click(function() {
+				$(".slider_kefu").hide();
+			})
+		})
+
+		layui.use('form', function() {
+			var form = layui.form;
+
+		});
+	</script>
+
+</body>

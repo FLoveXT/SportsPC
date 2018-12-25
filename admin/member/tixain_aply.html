@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>提现申请</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../layui/css/layui.css" rel="stylesheet">
+    <link href="../../css/iconfont.css" rel="stylesheet">
+    <link href="../css/admin.css" rel="stylesheet">
+
+    <script src="../../js/jquery-1.8.3.min.js"></script>
+    <script src="../../layui/layui.js"></script>
+    <script src="../../js/common.js"></script>
+    <script src="../../js/common.js"></script>
+
+    <style>
+        .layui-input,
+        .layui-select,
+        .layui-textarea {
+            border: 1px solid #cecece;
+        }
+
+        .input {
+            height: 28px;
+            text-indent: 6px;
+        }
+
+        .coloRed {
+            color: #ff6600;
+            margin-left: 4px;
+        }
+    </style>
+
+
+    <script>
+		$(function(){
+			$(".selectBank").click(function(){
+				$("#bankName").val($("#bankName-sel").val());
+				$("#bankName-text").val($("#bankName-sel").find("option:selected").text());
+				$("#bankNo").val($("#bankNo-sel").val());
+				$("#bankUserName").val($("#holderName-sel").val());
+				
+				if(!$("#bankName").val()){
+					layer.alert("请选择银行", { title : '错误信息'});
+					return false;
+				}
+				if(!$("#bankNo").val()){
+					layer.alert("请填写银行卡号", { title : '错误信息'});
+					return false;
+				}
+				if(!$("#holderName-sel").val()){
+					layer.alert("请填写持卡人姓名", { title : '错误信息'});
+					return false;
+				}
+				
+				var reqData = {
+						id: getStorageUser().id,	
+						bankName: $("#bankName").val(),	
+						bankNo: $("#bankNo").val(),	
+						holderName: $("#holderName-sel").val(),	
+				};
+				$.ajax({
+					type : "post",
+					url : BaseUrl + "user/updateUserInfo",
+					dataType : "json",
+					data: reqData,
+					success : function(result) {
+						var html = "";
+						if (result.code == SUCCESS_CODE) {
+							select_card.exit();
+						} else {
+							layer.alert(result.msg, { title : '错误信息'});
+						}
+					}
+				});
+				
+			});
+		})
+
+        //选择银行卡
+        var select_card = {
+            exit: function () {
+                $("#bank_card").hide();
+            },
+            pop_layer: function () {
+                $("#bank_card").show();
+                getBankInfo();
+            }
+        }
+        
+        var applyInfo = {
+				
+		};
+        function getBankInfo(){
+        	$.ajax({
+				type : "GET",
+				url : BaseUrl + "user/getUserInfo",
+				dataType : "json",
+				success : function(result) {
+					var html = "";
+					if (result.code == SUCCESS_CODE) {
+						var user = result.result.user;
+						$("#bankName-sel").val(user.bankName);
+						$("#bankNo-sel").val(user.bankNo);
+						$("#holderName-sel").val(user.holderName);
+						/* html += '<tr>';
+						html += '<td>' + user.bankName + '</td>';
+						html += '<td>' + user.bankNo + '</td>';
+						html += '<td>' + user.holderName + '</td>';
+						html += '<td><button type="button" class="layui-btn layui-btn-small selectBank">选择</button></td>';
+						html += '</tr>'; */
+					} else {
+						layer.alert(result.msg, {
+							title : '错误信息'
+						});
+					}
+					
+					
+				}
+			});
+        }
+        
+        
+        layui.use('form', function () {
+        	var form = layui.form; 
+          //自定义验证规则  
+          form.verify({  
+          });  
+            
+          //监听提交  
+          form.on('submit(submit-btn)', function(data){  
+        	 $.ajax({
+        		  type: "POST",
+        		  url: BaseUrl + "withdrawals/apply",
+        		  data: data.field,
+        		  dataType: "json",
+        		  cach: false,
+        		  success: function(result){
+        			  if(result.code == "00"){
+        				  layer.alert(result.msg, {  
+        					  title: ''  
+        				  }) 
+        				  $("#applyForm")[0].reset();
+        			  } else {
+        				  layer.alert(result.msg, {  
+        					  title: '错误信息'  
+        				  }) 
+        			  }
+        		  }
+        	  });
+          
+        	  return false;  
+          });  
+        });
+    </script>
+
+
+</head>
+
+<body style="background:#1f2934">
+
+        <div class="top_wrap">
+                <div class="container">
+                    <div class="inside">
+                        <span class="user_txt">会员中心</span>
+                        <div class="pull-right">
+                            <p class="time">
+                                <i class="iconfont icon-shijian"></i>美东时间：2018-03-28 03:21:22</p>
+                            <a href="recharge.html" class="save_money pull-right">
+                                <i class="iconfont icon-qian"></i> 线上存款</a>
+                        </div>
+        
+                    </div>
+                </div>
+        </div>
+
+    <div class="container" style="margin-top:10px;">
+
+        <div class="box">
+            <div class="left_part">
+                <div class="wrap">
+                    <h1>会员专区</h1>
+                    <ul class="menu">
+                        <li id="onlineRecharge">
+                            <a href="recharge.html">在线充值</a>
+                        </li>
+                        <!-- <li>
+                            <a href="#">额度转换</a>
+                        </li> -->
+                        <li id="tixianApply"  class="on">
+                            <a href="tixain_aply.html">提现申请</a>
+                        </li>
+                        <li>
+                            <a href="account_info.html">帐目信息</a>
+                        </li>
+                        <li>
+                            <a href="zhudan.html">注单查询</a>
+                        </li>
+                        <li id="loginOut">退出</li>
+                    </ul>
+                </div>
+                <div class="wrap">
+                    <h1>公告信息</h1>
+                    <ul class="menu">
+                        <li>
+                            <a href="user_info.html">个人信息</a>
+                        </li>
+                        <li>
+                            <a href="spot_news.html">最新消息</a>
+                        </li>
+                        <li>
+                            <a href="play_board.html">游戏公告</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="right_part">
+                <h1>出款申请</h1>
+                <div class="inside layui-form">
+
+
+                    <!--提现申请-->
+					<form id="applyForm" action="">
+                    <table class="layui-table" border="1" width="100%" style="margin-bottom: 8px;">
+                        <tbody>
+                            <tr>
+                                <td width="120">
+                                    <span class="ac-data-tit">
+                                        <label for="BankName">银行名称</label>
+                                    </span>
+
+                                </td>
+                                <td>
+                                    <input type="text" id="bankName-text" class="input" required lay-verify="required">
+                                    <input type="hidden" id="bankName" name="bankName" class="input" >
+                                    <a href="javascript:;" class="select_btn" onclick="select_card.pop_layer()">选择</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="ac-data-tit">
+                                        <label for="BankCode">卡号</label>
+                                    </span>
+                                </td>
+                                <td>
+
+                                    <input type="text" id="bankNo" name="bankNo" class="input" readonly="" onfocus="this.blur()" required lay-verify="required">
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="ac-data-tit">
+                                        <label for="BankUserName">姓名</label>
+                                    </span>
+                                </td>
+                                <td>
+                                    <input type="text" class="input" readonly="" id="bankUserName" name="bankUserName" required lay-verify="required">
+                                    <span class="field-validation-valid" data-valmsg-for="BankUserName" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="ac-data-tit">
+                                        <label for="WithdrawalMoney">提款金额</label>
+                                    </span>
+                                </td>
+                                <td>
+
+
+                                    <input class="input" data-val="true" data-val-number="字段 提款金额 必须是一个数字。" data-val-required="请输入提款金额！" id="money"
+                                        name="money" type="text" value="0" required lay-verify="required">
+                                    <span class="field-validation-valid" data-valmsg-for="money" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="ac-data-tit">
+                                        <label for="FormalitiesFee">手续费</label>
+                                    </span>
+                                </td>
+                                <td>
+
+                                    <input class="input" data-val="true" data-val-number="字段 手续费 必须是一个数字。" data-val-required="The 手续费 field is required." id="serviceCharge"
+                                        name="serviceCharge" readonly="readonly " type="text" value="0">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="ac-data-tit">
+                                        <label for="MoneyPassword">取款密码</label>
+                                    </span>
+                                </td>
+                                <td>
+
+
+                                    <input class="input" data-val="true" data-val-length="The field 取款密码 must be a string with a minimum length of 4 and a maximum length of 20."
+                                        data-val-length-max="20" data-val-length-min="4" data-val-required="请输入取款密码！" id="bankPwd"
+                                        name="bankPwd" type="password" required lay-verify="required">
+                                    <br>
+                                    <span class="field-validation-valid" data-valmsg-for="MoneyPassword" data-valmsg-replace="true"></span>
+
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span class="ac-data-tit">
+                                        <label for="Memo">备注</label>
+                                    </span>
+                                </td>
+                                <td>
+
+                                    <input class="input" id="remark" name="remark" type="text" value="">
+                                    <span class="field-validation-valid" data-valmsg-for="Memo" data-valmsg-replace="true"></span>
+
+                                </td>
+                            </tr>
+                            <tr>
+                                <td></td>
+                                <td>
+                                    <div></div>
+                                    <button id="submit-btn" lay-filter="submit-btn" class="layui-btn" lay-submit style="width: 166px;">提交</button>
+                                    <span class="field-validation-valid" data-valmsg-for="resultmessage" data-valmsg-replace="true"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+					</form>
+
+                </div>
+            </div>
+            <div style=" clear:both"></div>
+        </div>
+    </div>
+
+    <!--pop layer-->
+    <div class="pop_layer" id="bank_card" style="display:none;">
+        <div class="content" style="width: 800px;">
+            <h1>银行卡
+                <a href="javascript:;" onclick="select_card.exit()" class="exit_btn pull-right">
+                    <i class="iconfont icon-guanbi"></i>
+                </a>
+            </h1>
+            <div style="padding:30px;">
+                <table id="bankInfoTable" class="layui-table" border="1" style="margin-bottom: 8px;">
+                    <thead>
+                    	<tr class="tr-tit">
+                            <td>
+                                <span class="ac-data-class">银行卡名称</span>
+                            </td>
+                            <td>
+                                <span class="ac-data-class">银行卡号</span>
+                            </td>
+                            <td>
+                                <span class="ac-data-class">银行卡持有人</span>
+                            </td>
+                            <td>
+                                <span class="ac-data-class">操作</span>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <select id="bankName-sel"  required lay-verify="required" class="layui-input">
+                                   <option value="01020000">工商银行</option>
+                                   <option value="01050000">建设银行</option>
+                                   <option value="01030000">农业银行</option>
+                                   <option value="080000">招商银行</option>
+                                   <option value="03010000">交通银行</option>
+                                   <option value="01040000">中国银行</option>
+                                   <option value="03030000">光大银行</option>
+                                   <option value="03050000">民生银行</option>
+                                   <option value="03090000">兴业银行</option>
+                                   <option value="03020000">中信银行</option>
+                                   <option value="03060000">广发银行</option>
+                                   <option value="03100000">浦发银行</option>
+                                   <option value="03070000">平安银行</option>
+                                   <option value="03040000">华夏银行</option>
+                                   <option value="04083320">宁波银行</option>
+                                   <option value="03200000">东亚银行</option>
+                                   <option value="04012900">上海银行</option>
+                                   <option value="01000000">中国邮储银行</option>
+                                   <option value="04243010">南京银行</option>
+                                   <option value="65012900">上海农商行</option>
+                                   <option value="03170000">渤海银行</option>
+                                   <option value="64296510">成都银行</option>
+                                   <option value="04031000">北京银行</option>
+                                   <option value="64296511">徽商银行</option>
+                                   <option value="4341101">天津银行</option>
+                               </select>
+                            </td>
+                            <td>
+                                <input id="bankNo-sel" type="text" class="input" style="width: 100%;">
+                            </td>
+                            <td>
+                                <input id="holderName-sel" type="text" class="input" style="width: 100%;">
+                            </td>
+                            <td>
+                                <button type="button" class="layui-btn layui-btn-small selectBank">选择</button>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+                <div style="color:red;line-height:26px;">
+                    1.首次提款请填写银行卡信息,如："中国工商银行***支行"
+                    <br> 2.选择出款银行时请谨慎核对
+                    <br> 3.如有疑问请向客服核对
+                    <br> 4.为了您的财产安全,请勿泄漏您的相关信息
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
